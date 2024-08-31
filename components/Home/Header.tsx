@@ -13,10 +13,14 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store/Store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+type RestaurantNameType = {
+  restaurantId: string;
+};
+
 export default function Header({ onLayoutHeader, customHeaderStyle }) {
   //console.log(onLayoutHeader,customHeaderStyle)
   const route = useRouter();
-  const [restaurantName,setRestaurantName] = useState({});
+  const [restaurantName, setRestaurantName] = useState<RestaurantNameType | null>(null);
 
   useEffect(() => {
     const FetchData = async () => {
@@ -50,8 +54,8 @@ export default function Header({ onLayoutHeader, customHeaderStyle }) {
               fontWeight: "700",
             }}
           >
-            {/* Beiruts Treats */}
-            {restaurantName.restaurantId}
+            {/* Restaurant name*/}
+            {restaurantName ? restaurantName.restaurantId : 'Loading...'}
           </Text>
           <Text
             style={{
