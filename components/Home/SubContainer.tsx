@@ -50,6 +50,7 @@ export default function SubContainer() {
     stickyHeader: 0,
   });
 
+  // get height of the layout
   const onLayoutStickyHeader = (event: LayoutChangeEvent) => {
     setCustomHeight({
       ...customHeight,
