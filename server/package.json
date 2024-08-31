@@ -1,0 +1,23 @@
+{
+  "name": "pos-server",
+  "version": "1.0.0",
+  "description": "contains endpoints for point of sale restaurant app.",
+  "main": "api.js",
+  "scripts": {
+    "devStart": "nodemon server.js"
+  },
+  "author": "khalif noor <khalifahnur1095@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.8.0",
+    "mongoose": "^8.5.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
