@@ -38,8 +38,7 @@ export default function ProfileScreen() {
     setLoading(true);
   
     try {
-      await AsyncStorage.removeItem('AuthToken');
-      await AsyncStorage.removeItem('User');
+      await AsyncStorage.clear();
       router.push('/(auth)/signin');
 
       setTimeout(() => {
