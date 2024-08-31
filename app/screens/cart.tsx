@@ -1,7 +1,25 @@
+// import {
+//   ActivityIndicator,
+//   Image,
+//   Pressable,
+//   StyleSheet,
+//   Text,
+//   useWindowDimensions,
+//   View,
+// } from "react-native";
+// import React, { useLayoutEffect, useState } from "react";
+// import { useNavigation, useRouter } from "expo-router";
+// import AntDesign from "@expo/vector-icons/AntDesign";
+// import { SafeAreaView } from "react-native-safe-area-context";
+// import data from "@/components/Data";
+// import { useDispatch, useSelector } from "react-redux";
+// import { RootState } from "@/redux/store/Store";
+// import { removeItems } from "@/redux/CartSlice";
 import {
   ActivityIndicator,
   Image,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   useWindowDimensions,
@@ -10,6 +28,7 @@ import {
 import React, { useLayoutEffect, useState } from "react";
 import { useNavigation, useRouter } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import data from "@/components/Data";
 import { useDispatch, useSelector } from "react-redux";
@@ -50,6 +69,7 @@ export default function CartScreen() {
       headerShown: false,
     });
   });
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={[styles.header, { gap: (MAX_WIDTH * 1) / 2 - 80 }]}>
@@ -148,6 +168,7 @@ export default function CartScreen() {
       </View>
     </SafeAreaView>
   );
+    
 }
 
 const styles = StyleSheet.create({
@@ -213,3 +234,4 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
 });
+
