@@ -101,7 +101,7 @@ export default function signup() {
 
     setLoadingBtn(true);
     try {
-      await axios.post("http://192.168.100.198:3002/api/auth/SignUp", user);
+      await axios.post("http://192.168.100.201:3002/api/auth/SignUp", user);
       setLoadingBtn(false);
       setTimeout(() => {
         Alert.alert(

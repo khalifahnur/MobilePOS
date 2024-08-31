@@ -141,7 +141,7 @@ export default function SigninScreen() {
     console.log(user);
   
     try {
-      const response = await axios.post("http://192.168.100.198:3002/api/auth/SignIn", user);
+      const response = await axios.post("http://192.168.100.201:3002/api/auth/SignIn", user);
   
       const token = response.data.token;
       const userObj = response.data.user;
