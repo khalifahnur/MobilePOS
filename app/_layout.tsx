@@ -45,6 +45,7 @@ export default function RootLayout() {
         <Stack.Screen name="screens/filter" options={{ presentation:'modal',headerShown:false}} />
         <Stack.Screen name="screens/details"  />
         <Stack.Screen name="screens/account"  />
+        <Stack.Screen name="screens/addSection" />
         <Stack.Screen name="+not-found"  />
       </Stack>
       <ModalPortal />
