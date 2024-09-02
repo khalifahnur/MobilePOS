@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -8,12 +8,16 @@ import {
   Alert,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
+  useWindowDimensions,
 } from "react-native";
 import AnimatedInput from "../AnimatedInput";
 import AmountInput from "../AmountInput";
 import * as ImagePicker from "expo-image-picker";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function AddContainer() {
   const [category, setCategory] = useState<string>("");
@@ -22,8 +26,15 @@ export default function AddContainer() {
   const [amount, setAmount] = useState<string>("");
 
   const [image, setImage] = useState<string | null>(null);
+  const [restaurantId,setRestaurantId] = useState();
+
+  const [loading,setLoading] = useState(false);
 
   const router = useRouter();
+
+  const window = useWindowDimensions();
+  const height= window.height;
+  const width = window.width;
 
   const [statusMedia, requestPermissionMedia] =
     ImagePicker.useMediaLibraryPermissions();
@@ -96,9 +107,57 @@ export default function AddContainer() {
     setAmount(newAmount);
   }
 
-  console.log(typeof(amount))
+  const HandleSaveMenu = async () => {
+    setLoading(true)
+    try {
+      const response = await axios.post("http://192.168.100.203:3002/api/menu/createMenu", {
+        restaurantId,
+        title: category,
+        name: title,
+        quantity: desc,
+        cost: amount,
+        image,
+      });
+
+      if (response.status === 201 || response.status === 200) {
+        setCategory('');
+        setTitle('');
+        setAmount('');
+        setDesc('');
+        setImage('');
+
+        setTimeout(() => {
+          router.back();
+          setLoading(false)
+        }, 2000);
+
+        Alert.alert("Success", "Menu item added successfully");
+      } else {
+        setLoading(false)
+        Alert.alert("Error", "Failed to add menu item");
+      }
+    } catch (error) {
+      setLoading(false)
+      console.error("Error adding menu item:", error);
+      Alert.alert("Error", "Failed to add menu item");
+    }
+  };
+
+
+  useEffect(() => {
+    const FetchData = async () => {
+      const userRawObj = await AsyncStorage.getItem("User");
+      console.log(userRawObj)
+      if (userRawObj) {
+        const userObj = JSON.parse(userRawObj);
+        setRestaurantId(userObj.restaurantId);
+      }
+    };
+    FetchData();
+  }, []);
 
   return (
+    <>
     <ScrollView contentContainerStyle={styles.container}>
       <View style={{ marginTop: 20, alignItems: "center", marginBottom: 20, flexDirection:'row', }}>
         <Text style={{ fontSize: 20,textAlign:'center',marginRight:'auto',marginLeft:'auto' }}>Add To Menu</Text>
@@ -167,6 +226,7 @@ export default function AddContainer() {
         <View style={styles.inputWrapper}>
           <Pressable
             style={{ backgroundColor: "#4d81f1", padding: 13, borderRadius: 5 }}
+            onPress={HandleSaveMenu}
           >
             <Text
               style={{
@@ -182,6 +242,14 @@ export default function AddContainer() {
         </View>
       </View>
     </ScrollView>
+    {
+      loading && 
+      <View
+      style={{justifyContent: 'center', alignItems: 'center', height, width}}>
+      <ActivityIndicator size="large" color="#0000ff" />
+    </View>
+    }
+    </>
   );
 }
 
