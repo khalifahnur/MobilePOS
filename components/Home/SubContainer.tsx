@@ -70,7 +70,6 @@ export default function SubContainer() {
   useEffect(() => {
     const FetchData = async () => {
       const userRawObj = await AsyncStorage.getItem("RestaurantName");
-      console.log(userRawObj)
       if (userRawObj) {
         const userObj = JSON.parse(userRawObj);
         setRestaurantName(userObj);
