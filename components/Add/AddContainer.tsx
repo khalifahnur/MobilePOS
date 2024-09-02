@@ -7,12 +7,13 @@ import {
   Pressable,
   Alert,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import AnimatedInput from "../AnimatedInput";
 import AmountInput from "../AmountInput";
-import ImagePickerExample from "../ImagePicker";
 import * as ImagePicker from "expo-image-picker";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function AddContainer() {
   const [category, setCategory] = useState<string>("");
@@ -21,6 +22,8 @@ export default function AddContainer() {
   const [amount, setAmount] = useState<string>("");
 
   const [image, setImage] = useState<string | null>(null);
+
+  const router = useRouter();
 
   const [statusMedia, requestPermissionMedia] =
     ImagePicker.useMediaLibraryPermissions();
@@ -97,8 +100,11 @@ export default function AddContainer() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={{ marginTop: 2, alignItems: "center", marginBottom: 20 }}>
-        <Text style={{ fontSize: 20 }}>Add To Menu</Text>
+      <View style={{ marginTop: 20, alignItems: "center", marginBottom: 20, flexDirection:'row', }}>
+        <Text style={{ fontSize: 20,textAlign:'center',marginRight:'auto',marginLeft:'auto' }}>Add To Menu</Text>
+        <TouchableOpacity style={{backgroundColor:'#ffff',padding:10,borderRadius:20}} onPress={()=>router.back()}>
+          <AntDesign name="close" size={20} color="black" />
+        </TouchableOpacity>
       </View>
       <View style={{ flexDirection: "column" }}>
         <View style={styles.row}>
