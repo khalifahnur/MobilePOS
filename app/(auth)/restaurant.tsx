@@ -11,7 +11,7 @@ interface UserProp {
   name: string;
   phoneNumber: string;
   restaurantId: string | null;
-  user: string; // This is the userId
+  user: string;
 }
 
 export default function RestaurantScreen() {
@@ -26,7 +26,7 @@ export default function RestaurantScreen() {
     setLoading(true)
     const restaurantId = restaurantTxt;
     try {
-      const response = await axios.post(`http://192.168.100.198:3002/api/auth/${userId}/updateRestaurantDetails`,{restaurantId});
+      const response = await axios.post(`http://192.168.100.201:3002/api/auth/${userId}/updateRestaurantDetails`,{restaurantId});
 
       const { restaurantName } = response.data;
       await AsyncStorage.setItem("RestaurantName", JSON.stringify(restaurantName));
