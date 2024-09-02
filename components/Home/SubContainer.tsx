@@ -8,13 +8,14 @@ import {
   LayoutChangeEvent,
   Pressable,
 } from "react-native";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import data from "../Data";
 import Header from "./Header";
 import StickyHeader from "./StickyHeader";
 import { useRouter } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type RootStackParamList = {
   "screens/product": {
@@ -31,6 +32,8 @@ type RootStackParamList = {
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function SubContainer() {
+  const [restaurantName,setRestaurantName] = useState<string>('');
+
   const navigation = useNavigation<NavigationProp>();
   const HandleItem = (productData:{cost: string;
     id: number;
@@ -64,11 +67,23 @@ export default function SubContainer() {
       header: event.nativeEvent.layout.height,
     });
   };
+  useEffect(() => {
+    const FetchData = async () => {
+      const userRawObj = await AsyncStorage.getItem("RestaurantName");
+      console.log(userRawObj)
+      if (userRawObj) {
+        const userObj = JSON.parse(userRawObj);
+        setRestaurantName(userObj);
+      }
+    };
+    FetchData();
+  }, []);
 
   const header = (
     <Header
       onLayoutHeader={onLayoutHeader}
       customHeaderStyle={customHeight.stickyHeader}
+      restaurantName = {restaurantName}
     />
   );
 

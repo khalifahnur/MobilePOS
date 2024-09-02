@@ -5,6 +5,7 @@ import {
   View,
   Animated,
   Pressable,
+  LayoutChangeEvent,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
@@ -17,22 +18,32 @@ type RestaurantNameType = {
   restaurantId: string;
 };
 
-export default function Header({ onLayoutHeader, customHeaderStyle }) {
+type HeaderProps={
+  onLayoutHeader:(event: LayoutChangeEvent) => void,
+  customHeaderStyle:{
+    header: number;
+    stickyHeader: number;
+},
+restaurantName:string,
+
+}
+
+export default function Header({ onLayoutHeader, customHeaderStyle, restaurantName }:HeaderProps) {
   //console.log(onLayoutHeader,customHeaderStyle)
   const route = useRouter();
-  const [restaurantName, setRestaurantName] = useState<RestaurantNameType | null>(null);
+  // const [restaurantName, setRestaurantName] = useState<RestaurantNameType | null>(null);
 
-  useEffect(() => {
-    const FetchData = async () => {
-      const userRawObj = await AsyncStorage.getItem("RestaurantName");
-      console.log(userRawObj)
-      if (userRawObj) {
-        const userObj = JSON.parse(userRawObj);
-        setRestaurantName(userObj);
-      }
-    };
-    FetchData();
-  }, []);
+  // useEffect(() => {
+  //   const FetchData = async () => {
+  //     const userRawObj = await AsyncStorage.getItem("RestaurantName");
+  //     console.log(userRawObj)
+  //     if (userRawObj) {
+  //       const userObj = JSON.parse(userRawObj);
+  //       setRestaurantName(userObj);
+  //     }
+  //   };
+  //   FetchData();
+  // }, []);
 
   const HandleCartNavigate = () => {
     route.navigate("/screens/cart");
@@ -55,7 +66,7 @@ export default function Header({ onLayoutHeader, customHeaderStyle }) {
             }}
           >
             {/* Restaurant name*/}
-            {restaurantName ? restaurantName.restaurantId : 'Loading...'}
+            {restaurantName ? restaurantName : 'Loading...'}
           </Text>
           <Text
             style={{
