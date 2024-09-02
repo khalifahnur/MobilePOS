@@ -2,6 +2,7 @@ const Menu = require("../models/Menu");
 
 const createMenu = async (req, res) => {
   const { restaurantId, title, name, quantity, cost, image } = req.body;
+  console.log(req.body)
 
   try {
     const menu = await Menu.findOne({ restaurantId });
