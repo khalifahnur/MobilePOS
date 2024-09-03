@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
 const AuthRoute = require('./routes/AuthRouter')
+const MenuRoute = require('./routes/MenuRouter')
 
 dotenv.config();
 
@@ -29,7 +30,8 @@ mongoose
 // app routes
 
 app.use("/api/auth", AuthRoute);
-//app.use("/api/products", productRoutes);
+app.use("/api/menu", MenuRoute);
+app.use("/api/data", MenuRoute);
 
 //event listener of connection
 
