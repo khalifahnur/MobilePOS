@@ -1,7 +1,7 @@
 const Menu = require("../models/Menu")
 
 const FetchMenu = async (req, res) => {
-  const { restaurantId } = req.query;
+  const { restaurantId } = req.body;
 
   try {
     const data = await Menu.find({ restaurantId: restaurantId });
