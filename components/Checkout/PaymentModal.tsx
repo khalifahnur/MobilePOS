@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import Modal from "react-native-modals";
 import { AntDesign } from "@expo/vector-icons";
@@ -9,11 +9,23 @@ type PaymentModalProps = {
   subTotal: number;
 };
 
-export default function PaymentModal(
-  { visible, onClose, subTotal }: PaymentModalProps,
-  {}
-) {
-  console.log(visible);
+type ReceiptItem = {
+  cost: number;
+  id: string;
+  image: number;
+  name: string;
+  quantity: number;
+}[];
+
+export default function PaymentModal({ visible, onClose, subTotal }: PaymentModalProps) {
+  const receiptData = [
+    { cost: 490, id: "101", image: 22, name: "Wacky Wednesday", quantity: 1 },
+    { cost: 3750, id: "121", image: 24, name: "Steak Macon & Cheese Burger", quantity: 5 },
+    { cost: 1000, id: "116", image: 24, name: "Chicken & Cheese Burger", quantity: 2 }
+  ];
+
+
+
   return (
     <Modal visible={visible} onBackdropPress={onClose} style={styles.modal}>
       <View style={styles.container}>
@@ -27,7 +39,6 @@ export default function PaymentModal(
             />
             <Text style={styles.title}>Payment Success!</Text>
             <Text style={styles.changeText}>Ksh.{subTotal}.00</Text>
-            {/* <Text style={styles.subText}>Out of Ksh.{subTotal}.000 </Text> */}
           </View>
 
           <Pressable style={styles.button} onPress={onClose}>
@@ -35,7 +46,6 @@ export default function PaymentModal(
           </Pressable>
           <Pressable
             style={styles.printButton}
-            onPress={() => console.log("Print Receipt")}
           >
             <AntDesign name="printer" size={15} color="#fff" />
             <Text style={styles.printText}>Print Receipt</Text>
@@ -73,18 +83,12 @@ const styles = StyleSheet.create({
     color: "#000",
     marginVertical: 10,
   },
-  subText: {
-    fontSize: 16,
-    color: "#888",
-    marginBottom: 20,
-  },
   button: {
     backgroundColor: "#4d81f1",
     borderRadius: 5,
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginTop: 20,
-
     alignItems: "center",
   },
   buttonText: {
@@ -103,5 +107,6 @@ const styles = StyleSheet.create({
   },
   printText: {
     color: "#fff",
+    marginLeft: 10,
   },
 });
