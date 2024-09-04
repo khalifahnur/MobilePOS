@@ -9,13 +9,13 @@ import {
   Pressable,
 } from "react-native";
 import React, { useState, useRef, useEffect } from "react";
-import data from "../Data";
 import Header from "./Header";
 import StickyHeader from "./StickyHeader";
 import { useRouter } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import data from "../../components/Data";
 
 type RootStackParamList = {
   "screens/product": {
@@ -31,21 +31,25 @@ type RootStackParamList = {
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-export default function SubContainer() {
-  const [restaurantName,setRestaurantName] = useState<string>('');
+export default function SubContainer({ extractedData }) {
+  const router = useRouter();
+  const [restaurantName, setRestaurantName] = useState<string>("");
 
   const navigation = useNavigation<NavigationProp>();
-  const HandleItem = (productData:{cost: string;
-    id: number;
-    name: string;
-    quantity: string;
-    image: string;
-  }) => {
-    //console.log(productData)
-    navigation.navigate("screens/product", { productData: JSON.stringify(productData) });
+
+  const HandleItem = (productData) => {
+    console.log(productData.name)
+    router.push({pathname:"/screens/product",params: {
+      cost:productData.cost,
+      image:productData.image,
+      name:productData.name,
+      quantity:productData.quantity,
+    },});
   };
+
   
   
+
   const scrollY = useRef(new Animated.Value(0)).current;
   const listRef = useRef<Animated.FlatList | null>(null);
   const [customHeight, setCustomHeight] = useState({
@@ -53,7 +57,7 @@ export default function SubContainer() {
     stickyHeader: 0,
   });
 
-  // get height of the layout
+  // Get height of the layout
   const onLayoutStickyHeader = (event: LayoutChangeEvent) => {
     setCustomHeight({
       ...customHeight,
@@ -67,6 +71,7 @@ export default function SubContainer() {
       header: event.nativeEvent.layout.height,
     });
   };
+
   useEffect(() => {
     const FetchData = async () => {
       const userRawObj = await AsyncStorage.getItem("RestaurantName");
@@ -82,10 +87,9 @@ export default function SubContainer() {
     <Header
       onLayoutHeader={onLayoutHeader}
       customHeaderStyle={customHeight.stickyHeader}
-      restaurantName = {restaurantName}
+      restaurantName={restaurantName}
     />
   );
-
 
   const handleTabPress = (index: number) => {
     if (listRef.current) {
@@ -96,6 +100,40 @@ export default function SubContainer() {
       });
     }
   };
+
+  //console.log(extractedData)
+  // Grouped data
+  const groupedData = extractedData?.reduce((acc, item) => {
+    const dataItems = item.data || [];
+    
+    dataItems.forEach(dataItem => {
+      //console.log('Processing data item:', dataItem); // Log each data item to understand its structure
+      
+      const title = dataItem?.title?.toUpperCase() || 'UNKNOWN';
+      const descriptionData = (dataItem?.description || []).map(desc => ({
+        id: dataItem._id || 'UNKNOWN_ID', 
+        name: desc.name || 'No Name',
+        quantity: desc.quantity || '0',
+        cost: desc.cost || '0',
+        image: { uri: desc.image },
+      }));
+  
+      const existingCategory = acc?.find(cat => cat?.title === title);
+  
+      if (existingCategory) {
+        existingCategory.description.push(...descriptionData);
+      } else {
+        acc.push({
+          id: dataItem._id || 'UNKNOWN_ID',
+          title,
+          description: descriptionData
+        });
+      }
+    });
+  
+    return acc;
+  }, []);
+
 
   return (
     <View style={styles.container}>
@@ -123,7 +161,7 @@ export default function SubContainer() {
       </Animated.View>
       <Animated.FlatList
         ref={listRef}
-        data={data}
+        data={groupedData}
         renderItem={({ item, index }) => (
           <View key={index}>
             <View style={{ backgroundColor: "#ffff", padding: 10 }}>
