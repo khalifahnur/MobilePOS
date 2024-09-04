@@ -13,8 +13,16 @@ export default function AddSectionScreen() {
 
   })
   return (
-    <AddContainer />
+    <View style={styles.container}>
+      <AddContainer />
+    </View>
+    
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F2F4F7",
+  },
+})
