@@ -1,20 +1,3 @@
-// import {
-//   ActivityIndicator,
-//   Image,
-//   Pressable,
-//   StyleSheet,
-//   Text,
-//   useWindowDimensions,
-//   View,
-// } from "react-native";
-// import React, { useLayoutEffect, useState } from "react";
-// import { useNavigation, useRouter } from "expo-router";
-// import AntDesign from "@expo/vector-icons/AntDesign";
-// import { SafeAreaView } from "react-native-safe-area-context";
-// import data from "@/components/Data";
-// import { useDispatch, useSelector } from "react-redux";
-// import { RootState } from "@/redux/store/Store";
-// import { removeItems } from "@/redux/CartSlice";
 import {
   ActivityIndicator,
   Image,
