@@ -1,13 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
-import React, { useState } from "react";
+import { StyleSheet, Text, View, Pressable, Image } from "react-native";
+import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -19,8 +11,8 @@ import { addToCart } from "@/redux/CartSlice";
 import Toast from "react-native-toast-message";
 
 type ProductData = {
-  cost: string;
-  id: number;
+  cost: number;
+  id: string;
   name: string;
   quantity: string;
   image: string;
@@ -29,18 +21,14 @@ type ProductData = {
 export default function ProductScreen() {
   const [selectedValue, setSelectedValue] = useState<string>("Reviews");
   const [cost, setCost] = useState<number>(1);
-  const [data, setData] = useState();
+  const [data, setData] = useState<ProductData | null>(null);
 
   const router = useRouter();
-  const { productData } = useLocalSearchParams<{ productData: string }>();
-  let parsedProductData: ProductData | null = null;
-  
 
-  if (productData) {
-    parsedProductData = JSON.parse(productData);
-    // setData(parsedProductData)
-  }
-  //console.log(parsedProductData?.image)
+  const params = useLocalSearchParams();
+
+  const price = (params?.cost / 100).toFixed(2);
+  console.log(price);
 
   const HandleAdd = () => {
     setCost(cost + 1);
@@ -54,42 +42,31 @@ export default function ProductScreen() {
     }
   };
 
-  const convertCost = (costString: string) => {
-    const numberString = costString.replace(/[^0-9.-]+/g, "");
-    //console.log(numberString);
-    return parseInt(numberString);
-  };
-
-  const costNumber = parsedProductData
-    ? convertCost(parsedProductData.cost)
-    : 0;
-
-  const updatedCost = cost > 1 ? costNumber * cost : costNumber
-
   const dispatch = useDispatch();
 
-  const HandleAddToCart = ()=>{
+  const HandleAddToCart = () => {
+    if (data) {
+      dispatch(
+        addToCart({
+          id: data.id,
+          name: data.name,
+          image: data.image,
+          cost: data.cost * cost,
+          quantity: cost,
+        })
+      );
 
-    dispatch(addToCart({
-      id:parsedProductData.id,
-      name:parsedProductData.name,
-      image:parsedProductData.image,
-      cost:updatedCost,
-      quantity:cost,
+      Toast.show({
+        type: "success",
+        text1: "Item Added to Cart",
+        text2: `${data.name} has been added to your cart.`,
+      });
 
-    }))
-
-    Toast.show({
-      type: 'success',
-      text1: 'Item Added to Cart',
-      text2: `${parsedProductData.name} has been added to your cart.`,
-    });
-
-    setTimeout(()=>{
-      router.back()
-    },3000)
-    console.log("added to cart")
-  }
+      setTimeout(() => {
+        router.back();
+      }, 3000);
+    }
+  };
 
   return (
     <>
@@ -97,7 +74,10 @@ export default function ProductScreen() {
         <StatusBar />
         <View style={styles.upperContainer}>
           <View style={styles.header}>
-            <Pressable style={styles.iconButton} onPress={() => router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.iconButton}
+              onPress={() => router.replace("/(tabs)")}
+            >
               <Ionicons name="arrow-back-outline" size={20} color="black" />
             </Pressable>
             <Pressable style={styles.iconButton}>
@@ -105,30 +85,36 @@ export default function ProductScreen() {
             </Pressable>
           </View>
           <View style={styles.imageContainer}>
-            <Image source={parsedProductData?.image} style={styles.image} />
+            {data?.image && (
+              <Image source={{ uri: params.image }} style={styles.image} />
+            )}
           </View>
         </View>
 
         <View style={styles.bottomContainer}>
           <View style={styles.productDetails}>
             <View>
-              <Text style={styles.productName}>{parsedProductData?.name}</Text>
+              <Text style={styles.productName}>{params?.name}</Text>
               <Text style={styles.productCategory}>Burger</Text>
             </View>
-            <Text style={styles.productPrice}>Ksh. {updatedCost}.00</Text>
+            <Text style={styles.productPrice}>Ksh. {price * cost}.00</Text>
           </View>
           <DetailsTabs
             selectedTab={selectedValue}
             setSelectedTab={setSelectedValue}
             tabsName={["Reviews", "Ratings"]}
           >
-            {selectedValue == "Reviews" ? (
-              <Text>
-                A hamburger is a sandwich with a beef patty, served between two
-                soft buns, and topped with various condiments such as cheese,
-                lettuce, and ketchup. It's a popular...{" "}
-                <Text style={styles.seeMore}>See more.</Text>
-              </Text>
+            {selectedValue === "Reviews" ? (
+              params?.quantity != null ? (
+                <Text>params.quantity</Text>
+              ) : (
+                <Text>
+                  A hamburger is a sandwich with a beef patty, served between
+                  two soft buns, and topped with various condiments such as
+                  cheese, lettuce, and ketchup. It's a popular...{" "}
+                  <Text style={styles.seeMore}>See more.</Text>
+                </Text>
+              )
             ) : (
               <Text>5 star ratings</Text>
             )}
