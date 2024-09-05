@@ -26,8 +26,10 @@ export default function ProductScreen() {
   const router = useRouter();
 
   const params = useLocalSearchParams();
-
-  const price = (params?.cost / 100).toFixed(2);
+  console.log(params)
+const imageUrl = {uri:params.image}
+console.log(imageUrl)
+  const price = params?.cost;
 
   const HandleAdd = () => {
     setCost(cost + 1);
@@ -66,14 +68,6 @@ export default function ProductScreen() {
       }, 3000);
     }
   };
-  const testToast = () => {
-    console.log("testToast")
-    Toast.show({
-      type: "success",
-      text1: "Item Added to Cart",
-      //text2: `${data.name} has been added to your cart.`,
-    });
-}
 
   return (
     <>
@@ -83,7 +77,7 @@ export default function ProductScreen() {
           <View style={styles.header}>
             <Pressable
               style={styles.iconButton}
-              onPress={() => router.replace("/(tabs)")}
+              onPress={() => router.back()}
             >
               <Ionicons name="arrow-back-outline" size={20} color="black" />
             </Pressable>
@@ -92,9 +86,9 @@ export default function ProductScreen() {
             </Pressable>
           </View>
           <View style={styles.imageContainer}>
-            {data?.image && (
-              <Image source={{ uri: params.image }} style={styles.image} />
-            )}
+            {/* {params?.image && ( */}
+              <Image source={{imageUrl}} style={styles.image}  />
+            {/* )} */}
           </View>
         </View>
 
