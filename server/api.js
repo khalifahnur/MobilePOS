@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 
 const AuthRoute = require('./routes/AuthRouter')
 const MenuRoute = require('./routes/MenuRouter')
+const SalesRoute = require('./routes/SalesRouter')
 
 dotenv.config();
 
