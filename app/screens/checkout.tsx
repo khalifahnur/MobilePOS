@@ -6,16 +6,19 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigation, useRouter } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store/Store";
 import CheckoutModal from "@/components/Checkout/CheckoutModal";
 import ModalLoader from "@/components/ModalLoader";
 import PaymentModal from "@/components/Checkout/PaymentModal";
 import moment from "moment";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { emptyCart } from "@/redux/CartSlice";
 
 export default function CheckoutScreen() {
   const [visibleModal, setModalVisible] = useState(false);
@@ -26,40 +29,63 @@ export default function CheckoutScreen() {
   const [modalPaymentSuccess, setModalPaymentSuccess] =
     useState<boolean>(false);
   const [counter, setCounter] = useState(1);
+  const [restaurantId,setrestaurantId] = useState();
+  
 
   const navigation = useNavigation();
   const router = useRouter();
 
   const cart = useSelector((state: RootState) => state.cart.cart);
+  const dispatch = useDispatch();
 
   const subTotal = cart.reduce(
     (acc, item) => acc + item.cost * item.quantity,
     0
   );
 
-  console.log(cart,subTotal)
+  const PaymentCost = subTotal;
 
-  const HandlePayment = () => {
+  const HandlePayment = async() => {
     setLoading(true);
+    try{
+      const response = await axios.post("http://192.168.100.203:3002/api/sales/createSales",{
+        restaurantId,
+        items:cart,
+        totalCost:subTotal
+      })
+      console.log(response.data)
+      
 
-    // Get current date and time using moment
-    const currentDateTime = moment().format("YYYY MMMM DD, HH:mm:ss");
-
-    // Generate a random order ID
-    const randomId = `#${Math.floor(100000 + Math.random() * 900000)}`;
-
-    const sequentialId = `#${counter.toString().padStart(6, "0")}`;
-    console.log("Payment ID:", sequentialId);
-    console.log("Payment ID:", randomId);
-    console.log("Date and Time:", currentDateTime);
-
-    setTimeout(() => {
+      if(response.status === 200){
+        setTimeout(() => {
+          dispatch(emptyCart())
+          setLoading(false);
+          setModalPaymentSuccess(true);
+        }, 2000);
+      }
+    }catch (error) {
       setLoading(false);
-      setModalPaymentSuccess(true);
-      setCounter((prevCounter) => prevCounter + 1);
-      // You can use currentDateTime and randomId here if needed
-    }, 2000);
+      console.error('Error submitting order:', error);
+    }
   };
+
+
+  useEffect(() => {
+    const FetchData = async () => {
+      const userRawObj = await AsyncStorage.getItem("User");
+      if (userRawObj) {
+        const userObj = JSON.parse(userRawObj);
+        setrestaurantId(userObj.restaurantId);
+      }
+    };
+    FetchData();
+  }, []);
+
+  const HandleBtnModal = ()=>{
+    setModalPaymentSuccess(false)
+   // router.navigate("/(tabs)/")
+  }
+
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -70,7 +96,19 @@ export default function CheckoutScreen() {
   return (
     <>
       <SafeAreaView style={styles.container}>
+        
         <View style={styles.header}>
+        <View style={{alignItems:'center'}}>
+        <Text
+          style={{
+            textAlign: "center",
+            fontSize: 18,
+            fontFamily: "PlusJakartaSansMedium",
+          }}
+        >
+          Checkout
+        </Text>
+        </View>
           <View style={styles.cartTotalStyle}>
             <View
               style={{
@@ -193,8 +231,8 @@ export default function CheckoutScreen() {
       {modalPaymentSuccess && (
         <PaymentModal
           visible={modalPaymentSuccess}
-          onClose={() => setModalPaymentSuccess(false)}
-          subTotal={subTotal}
+          onClose={HandleBtnModal}
+          subTotal={PaymentCost}
         />
       )}
     </>
