@@ -66,6 +66,7 @@ export default function CheckoutScreen() {
       headerShown: false,
     });
   }, []);
+
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -95,9 +96,8 @@ export default function CheckoutScreen() {
               }}
             />
             {cart.map((item, index) => (
-              <View style={styles.cartTotal} key={item.id}>
+              <View style={styles.cartTotal} key={index}>
                 <View style={{ flex: 0.5 }}>
-                  <Text style={styles.cartTotalTxt}>{item.id}</Text>
                   <Text style={styles.cartTotalTxt}>{item.name}</Text>
                 </View>
                 <View style={{ flex: 0.1 }}>
