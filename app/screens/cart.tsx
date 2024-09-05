@@ -27,6 +27,7 @@ export default function CartScreen() {
 
   const cart = useSelector((state: RootState) => state.cart.cart);
   const dispatch = useDispatch();
+  console.log(JSON.stringify(cart))
 
   const HandleCheckOut = () => {
     if (cart !== null && cart.length > 0) {
@@ -78,7 +79,7 @@ export default function CartScreen() {
           <View key={index} style={styles.cartStyle}>
             <View style={{ flex: 0.2 }}>
               {desc.image !== "" ? (
-                <Image source={desc.image} style={{ width: 50, height: 50 }} />
+                <Image source={{uri:desc.image}} style={{ width: 50, height: 50 }} />
               ) : (
                 <Image
                   source={require("../../assets/images/image-gallery.png")}
