@@ -1,21 +1,31 @@
-const salesModel = require('../models/sales');
+const Sales = require('../models/sales');
 
-const SalesController = async(req,res)=>{
-    try{
-        const {restaurantId,item,totalCost} = req.body;
+const SalesController = async (req, res) => {
+  try {
+    const { restaurantId, items, totalCost } = req.body;
 
-        const newSales = new salesModel({
-            restaurantId,
-            item,
-            totalCost
-        })
+    // Check for missing fields
+    if (!restaurantId || !items || !totalCost) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
 
-        await newSales.save();
-        res.status(200).json({message:"Order created successfully"})
+    const newSales = new Sales({
+      restaurantId,
+      items,
+      totalCost,
+    });
 
-    }catch (error) {
-        return res.status(500).json({ error: 'Error creating order' });
-      }
-}
+    await newSales.save();
 
-module.exports = {SalesController};
+    res.status(200).json({
+      message: "Sales stored successfully",
+      salesData: newSales,
+    });
+
+  } catch (error) {
+    console.error("Error storing sales:", error.message || error);
+    return res.status(500).json({ error: 'Error storing sales' });
+  }
+};
+
+module.exports = { SalesController };
