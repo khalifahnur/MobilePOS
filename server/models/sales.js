@@ -2,19 +2,18 @@ const { default: mongoose } = require("mongoose");
 const { Schema, model } = mongoose;
 
 const userSchema = new Schema({
+  restaurantId:{type:String,required:true},
   items: [
     {
       cost: Number,
       id: String,
-      image: Number,
+      image: String,
       name: String,
       quantity: Number,
     },
   ],
   totalCost: Number,
-  orderItem: {type:Number,required: true, unique: true},
-  timeStamp: Date,
-});
+},{timestamps:true});
 
 const Sales = model("Sale", userSchema);
 module.exports = Sales;
