@@ -9,23 +9,7 @@ type PaymentModalProps = {
   subTotal: number;
 };
 
-type ReceiptItem = {
-  cost: number;
-  id: string;
-  image: number;
-  name: string;
-  quantity: number;
-}[];
-
 export default function PaymentModal({ visible, onClose, subTotal }: PaymentModalProps) {
-  const receiptData = [
-    { cost: 490, id: "101", image: 22, name: "Wacky Wednesday", quantity: 1 },
-    { cost: 3750, id: "121", image: 24, name: "Steak Macon & Cheese Burger", quantity: 5 },
-    { cost: 1000, id: "116", image: 24, name: "Chicken & Cheese Burger", quantity: 2 }
-  ];
-
-
-
   return (
     <Modal visible={visible} onBackdropPress={onClose} style={styles.modal}>
       <View style={styles.container}>
