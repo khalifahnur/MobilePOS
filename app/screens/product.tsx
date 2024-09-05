@@ -28,7 +28,6 @@ export default function ProductScreen() {
   const params = useLocalSearchParams();
 
   const price = (params?.cost / 100).toFixed(2);
-  console.log(price);
 
   const HandleAdd = () => {
     setCost(cost + 1);
@@ -45,13 +44,13 @@ export default function ProductScreen() {
   const dispatch = useDispatch();
 
   const HandleAddToCart = () => {
-    if (data) {
+    if (params) {
       dispatch(
         addToCart({
-          id: data.id,
-          name: data.name,
-          image: data.image,
-          cost: data.cost * cost,
+          id: params?.id,
+          name: params?.name,
+          image: params?.image,
+          cost: price * cost,
           quantity: cost,
         })
       );
@@ -59,7 +58,7 @@ export default function ProductScreen() {
       Toast.show({
         type: "success",
         text1: "Item Added to Cart",
-        text2: `${data.name} has been added to your cart.`,
+        text2: `${params?.name} has been added to your cart.`,
       });
 
       setTimeout(() => {
@@ -67,6 +66,14 @@ export default function ProductScreen() {
       }, 3000);
     }
   };
+  const testToast = () => {
+    console.log("testToast")
+    Toast.show({
+      type: "success",
+      text1: "Item Added to Cart",
+      //text2: `${data.name} has been added to your cart.`,
+    });
+}
 
   return (
     <>
@@ -105,16 +112,13 @@ export default function ProductScreen() {
             tabsName={["Reviews", "Ratings"]}
           >
             {selectedValue === "Reviews" ? (
-              params?.quantity != null ? (
-                <Text>params.quantity</Text>
-              ) : (
                 <Text>
                   A hamburger is a sandwich with a beef patty, served between
                   two soft buns, and topped with various condiments such as
                   cheese, lettuce, and ketchup. It's a popular...{" "}
                   <Text style={styles.seeMore}>See more.</Text>
                 </Text>
-              )
+              
             ) : (
               <Text>5 star ratings</Text>
             )}
