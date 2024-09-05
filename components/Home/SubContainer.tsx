@@ -38,10 +38,11 @@ export default function SubContainer({ extractedData }) {
   const navigation = useNavigation<NavigationProp>();
 
   const HandleItem = (productData) => {
-    console.log(productData.name)
+    //console.log(productData.image.uri)
     router.push({pathname:"/screens/product",params: {
+      id:productData.id,
       cost:productData.cost,
-      image:productData.image,
+      image:productData.image.uri,
       name:productData.name,
       quantity:productData.quantity,
     },});
@@ -114,7 +115,7 @@ export default function SubContainer({ extractedData }) {
         id: dataItem._id || 'UNKNOWN_ID', 
         name: desc.name || 'No Name',
         quantity: desc.quantity || '0',
-        cost: desc.cost || '0',
+        cost: (desc.cost /100).toFixed(2) || '0',
         image: { uri: desc.image },
       }));
   
@@ -134,6 +135,7 @@ export default function SubContainer({ extractedData }) {
     return acc;
   }, []);
 
+  
 
   return (
     <View style={styles.container}>
