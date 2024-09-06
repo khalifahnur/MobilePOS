@@ -28,4 +28,15 @@ const SalesController = async (req, res) => {
   }
 };
 
-module.exports = { SalesController };
+const FetchSales = async (req, res) => {
+    const { restaurantId } = req.query;
+  console.log(req.query)
+    try {
+      const data = await Sales.find({ restaurantId: restaurantId });
+      res.status(200).json(data);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch data" });
+    }
+  };
+
+module.exports = { SalesController, FetchSales };
