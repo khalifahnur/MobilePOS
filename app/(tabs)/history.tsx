@@ -1,49 +1,98 @@
 import { View, Text, StyleSheet } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SubContainer from "@/components/History/SubContainer";
 import { useLocalSearchParams } from "expo-router";
 import HistoryPlaceholder from "@/components/HistoryPlaceholder";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 export default function HistoryScreen() {
+  const [restaurantId, setrestaurantId] = useState();
+  const [data,setData] = useState([]);
+
   const { FilteredDates, selectedCost, selectedTime } = useLocalSearchParams();
   const selectedPeriodTime = JSON.stringify(selectedTime);
 
-const minTime = selectedPeriodTime?.split("-")[0].trim();
-const maxTime = selectedPeriodTime?.split("-")[1].trim()
-// Check if FilteredDates is a string before parsing
-const parsedFilteredDates = typeof FilteredDates === 'string' ? JSON.parse(FilteredDates) : FilteredDates;
+  const minTime = selectedPeriodTime?.split("-")[0].trim();
+  const maxTime = selectedPeriodTime?.split("-")[1].trim();
+  // Check if FilteredDates is a string before parsing
+  const parsedFilteredDates =
+    typeof FilteredDates === "string"
+      ? JSON.parse(FilteredDates)
+      : FilteredDates;
 
-const selectedCostRange = { min: 400, max: 1000 }; // Example cost range
+  const selectedCostRange = { min: 400, max: 1000 }; // Example cost range
 
-// Function to filter based on the inputs
-const filteredHistory = HistoryPlaceholder.filter(item => {
+  // Function to filter based on the inputs
+  const filteredHistory = HistoryPlaceholder.filter((item) => {
+    const date = item.date.split(",")[0].replace(/ /g, "-");
+    // Check if itemDate is included in dates array
+    const isDateMatch = parsedFilteredDates?.includes(date);
 
-  const date = item.date.split(",")[0].replace(/ /g, "-");
-  // Check if itemDate is included in dates array
-  const isDateMatch = parsedFilteredDates?.includes(date);
+    // Filter by time (assuming time in "HH:mm:ss" format)
+    const itemTime = item.date.split(", ")[1].split(":").slice(0, 2).join(":");
+    const isTimeMatch = itemTime >= minTime && itemTime <= maxTime;
 
-  // Filter by time (assuming time in "HH:mm:ss" format)
-  const itemTime = item.date.split(", ")[1].split(":").slice(0, 2).join(":");  
-  const isTimeMatch = itemTime >= minTime && itemTime <= maxTime;
+    // Filter by cost
+    const isCostMatch =
+      item.cost >= selectedCostRange.min && item.cost <= selectedCostRange.max;
 
-  // Filter by cost
-  const isCostMatch = item.cost >= selectedCostRange.min && item.cost <= selectedCostRange.max;
+    return isDateMatch && isTimeMatch && isCostMatch;
+  });
 
-  return isDateMatch && isTimeMatch && isCostMatch;
-});
+  useEffect(() => {
+    const FetchData = async () => {
+      const userRawObj = await AsyncStorage.getItem("User");
+      if (userRawObj) {
+        const userObj = JSON.parse(userRawObj);
+        setrestaurantId(userObj.restaurantId);
+      }
+    };
+    FetchData();
+  }, []);
+
+  useEffect(() => {
+    const FetchSales = async () => {
+      try {
+        const response = await axios.get(
+          "http://192.168.100.198:3002/api/sales/fetchSales", 
+          { params: { restaurantId } }
+        );
+        if (response.status === 200) {
+          const resData = JSON.stringify(response.data)
+          setData(resData);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    if (restaurantId) {
+      FetchSales();
+    }
+  
+  }, [restaurantId,data]);
+  console.log("fetched data",data)
 
   return (
     <SafeAreaView style={style.container}>
       <StatusBar hidden={false} backgroundColor="#F2F4F7" style="dark" />
       <ThemedView
-        style={[style.container, {borderTopWidth:2,borderTopColor:'#E8E8E8',marginBottom:65}]}
+        style={[
+          style.container,
+          { borderTopWidth: 2, borderTopColor: "#E8E8E8", marginBottom: 65 },
+        ]}
         lightColor="#F2F4F7"
       >
-        
-        <SubContainer HistoryPlaceholder={filteredHistory.length > 0 ? filteredHistory : HistoryPlaceholder} />
+        <SubContainer
+          FetchedData = {data}
+          // HistoryPlaceholder={
+          //   filteredHistory.length > 0 ? filteredHistory : HistoryPlaceholder
+          // }
+        />
       </ThemedView>
     </SafeAreaView>
   );
@@ -52,6 +101,5 @@ const style = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F2F4F7",
-    
   },
 });
