@@ -48,7 +48,7 @@ export default function CheckoutScreen() {
   const HandlePayment = async() => {
     setLoading(true);
     try{
-      const response = await axios.post("http://192.168.100.203:3002/api/sales/createSales",{
+      const response = await axios.post("http://192.168.100.198:3002/api/sales/createSales",{
         restaurantId,
         items:cart,
         totalCost:subTotal
