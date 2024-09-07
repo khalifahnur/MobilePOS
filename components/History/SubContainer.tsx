@@ -84,13 +84,20 @@ export default function SubContainer({FetchedData}:FetchedDataProps) {
     });
   };
 
-  // const HandleModalDetails =(data:HistoryPlaceholderItem)=>{
-  //   router.push({pathname:'/screens/details',params:{cost:data.cost,date:data.date,id:data.id,itemId:data.itemId,name:data.name,quantity:data.quantity}})
-  // }
+
 
   // Check if FetchedData is a string, then parse it to JSON
 const parsedData = typeof FetchedData === 'string' ? JSON.parse(FetchedData) : FetchedData;
 
+const HandleModalDetails =(data)=>{
+  console.log("Modal data",data)
+  router.push({
+    pathname:'/screens/details',
+    params:{
+      data: JSON.stringify(data)
+      
+    }})
+}
 
   return (
     <View style={styles.Container}>
@@ -174,6 +181,7 @@ const parsedData = typeof FetchedData === 'string' ? JSON.parse(FetchedData) : F
       <>
         <View key={item?._id} style={{ paddingHorizontal: 20 }}>
           <TouchableOpacity
+          onPress={()=>HandleModalDetails(item)}
             style={[
               styles.Content,
               {
@@ -183,7 +191,7 @@ const parsedData = typeof FetchedData === 'string' ? JSON.parse(FetchedData) : F
             ]}
           >
             {/* Check if data is valid */}
-            <Text style={styles.ContentText}>ID: # {item?._id.slice(-4,-1)} </Text>
+            <Text style={styles.ContentText}># {item?._id.slice(-4,-1)} </Text>
             <Text style={styles.ContentText}>
               {/* Ensure valid date */}
               {isNaN(createdAtDate.getTime())
