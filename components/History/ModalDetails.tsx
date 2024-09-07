@@ -16,64 +16,78 @@ type PaymentModalProps = {
   };
 };
 
-export default function ModalDetails() {
+export default function ModalDetails({FetchData}) {
   const [width, setWidth] = useState<number>();
-  const {cost,id,itemId,quantity,name,date} = useLocalSearchParams();
+
+ const data = JSON.parse(FetchData);
+
+ const itemId = data?._id.slice(-6,-1);
+  const restaurantName = data?.restaurantId;
+  const date1 = new Date (data?.createdAt).toLocaleString();
+  const foodName = data?.items?.map((item)=>item.name);
+  const quantity = data?.items?.map((item)=>item.quantity);
+  const price = data?.items?.map((item)=>item.cost);
+  const _id = data?.items?.map((item)=>item.id.slice(-4,-1));
+  const totalCost = data?.totalCost;
+
+  console.log(restaurantName,foodName,totalCost,date1)
+  
 
   return (
     <View style={styles.container} onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
-      <Header date={date} />
+      <Header date={date1} title={restaurantName}  />
       <View style={styles.infoContainer}>
-        <Text style={styles.infoText}>Ref Number:{itemId} </Text>
+        <Text style={styles.infoText}>Ref Number: # {itemId} </Text>
       </View>
       <ItemDetails
-        itemName={name}
-        quantity={quantity}
-        itemCost={cost}
-        id={id}
+        data={data}
       />
       <Separator />
-      <PaymentDetails tax={70} totalPayment={cost} />
+      <PaymentDetails tax={70} totalPayment={totalCost} />
       <Separator dashed />
     </View>
   );
 }
 
-const Header = ({ date }: { date: string | string[] }) => (
+const Header = ({ date,title }) => (
   <View style={styles.header}>
     <Image
       source={require("../../assets/images/userImageAvatar.png")}
       style={styles.checkmark}
     />
-    <Text style={styles.title}>Beirut Treats</Text>
+    <Text style={styles.title}>{title}</Text>
     <Text>{date}</Text>
   </View>
 );
 
 const ItemDetails = ({
-  itemName,
-  quantity,
-  itemCost,
-  id,
-}: {
-  itemName: string;
-  quantity: number;
-  itemCost: string | string[];
+  data
 }) => (
-  <View style={styles.infoBox}>
-    <Text style={{fontWeight:'500',fontSize:14}}>{id}</Text>
-    <Text style={[styles.infoText,{textAlign:'justify',width:100,fontWeight:'500'}]}>{itemName}</Text>
-    <Text style={{fontWeight:'500',fontSize:14}}>x{quantity}</Text>
-    <Text style={{fontWeight:'500',fontSize:14}}>Ksh. {itemCost}.00</Text>
-  </View>
+  
+    data?.items?.map((item,index)=>(
+  <View style={styles.infoBox} key={index}>
+    <View>
+      <Text style={{fontWeight:'500',fontSize:14}}>#{item.id.slice(-5,-1)}</Text>
+    </View>
+      <View style={{flexDirection:'column',justifyContent:'center'}}>
+        <Text style={[styles.infoText,{textAlign:'justify',width:100,fontWeight:'500'}]}>{item.name}</Text>
+      </View>
+      
+      <View>
+        <Text style={{fontWeight:'500',fontSize:14}}>x{item.quantity}</Text>
+      </View>
+      <View>
+        <Text style={{fontWeight:'500',fontSize:14}}>Ksh. {item.cost}.00</Text>
+      </View>
+    </View>
+    ))
+  
+  
 );
 
 const PaymentDetails = ({ tax, totalPayment }: { tax: number; totalPayment: string }) => (
   <>
-    <View style={styles.row}>
-      <Text style={styles.infoText}>Tax</Text>
-      <Text>Ksh. {tax.toFixed(2)}</Text>
-    </View>
+    
     <View style={[styles.row,{marginTop:5}]}>
       <Text style={styles.totalPayment}>Total Payment:</Text>
       <Text style={styles.totalPayment}>Ksh. {totalPayment}.00</Text>
