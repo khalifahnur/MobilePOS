@@ -88,7 +88,9 @@ export default function SubContainer({FetchedData}:FetchedDataProps) {
   //   router.push({pathname:'/screens/details',params:{cost:data.cost,date:data.date,id:data.id,itemId:data.itemId,name:data.name,quantity:data.quantity}})
   // }
 
-  console.log("container",FetchedData)
+  // Check if FetchedData is a string, then parse it to JSON
+const parsedData = typeof FetchedData === 'string' ? JSON.parse(FetchedData) : FetchedData;
+
 
   return (
     <View style={styles.Container}>
@@ -163,14 +165,15 @@ export default function SubContainer({FetchedData}:FetchedDataProps) {
       </Animated.View>
 
       { FetchedData?.length > 0 ? (
-  <Animated.FlatList
-    ref={listRef}
-    data={FetchedData}
-    renderItem={({ item, index }) => (
+      <Animated.FlatList
+  ref={listRef}
+  data={parsedData}
+  renderItem={({ item, index }) => {
+    const createdAtDate = new Date(item?.createdAt);
+    return (
       <>
         <View key={item?._id} style={{ paddingHorizontal: 20 }}>
           <TouchableOpacity
-            //onPress={() => HandleModalDetails(item)}
             style={[
               styles.Content,
               {
@@ -179,29 +182,36 @@ export default function SubContainer({FetchedData}:FetchedDataProps) {
               },
             ]}
           >
-            <Text style={styles.ContentText}>ID: # {item?._id} </Text>
-            <Text style={styles.ContentText}>{new Date(item?.createdAt).toLocaleString()}</Text>
+            {/* Check if data is valid */}
+            <Text style={styles.ContentText}>ID: # {item?._id.slice(-4,-1)} </Text>
+            <Text style={styles.ContentText}>
+              {/* Ensure valid date */}
+              {isNaN(createdAtDate.getTime())
+                ? "Invalid Date"
+                : createdAtDate.toLocaleString()}
+            </Text>
             <Text style={styles.ContentText}>{item?.totalCost}</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.Divider} />
       </>
-      
-    )}
-    onScroll={Animated.event(
-      [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-      { useNativeDriver: true }
-    )}
-    ListHeaderComponent={
-      <Search
-        onLayoutSearch={onLayoutSearchHeader}
-        searchMarginTopStyle={customHeight.HeaderTitleHeight}
-        searchMarginBottomStyle={customHeight.headerContentTitleHeight}
-      />
-    }
-    showsVerticalScrollIndicator={false}
-  />
-) : (
+    );
+  }}
+  onScroll={Animated.event(
+    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+    { useNativeDriver: true }
+  )}
+  ListHeaderComponent={
+    <Search
+      onLayoutSearch={onLayoutSearchHeader}
+      searchMarginTopStyle={customHeight.HeaderTitleHeight}
+      searchMarginBottomStyle={customHeight.headerContentTitleHeight}
+    />
+  }
+  showsVerticalScrollIndicator={false}
+/>
+
+ ) : (
   <View>
     <Text>Filtered data:null</Text>
   </View>
