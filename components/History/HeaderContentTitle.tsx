@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginTop: 5,
-    marginBottom:20,
+    
     padding:18,
   },
   HeaderText: {
