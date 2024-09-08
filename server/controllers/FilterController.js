@@ -5,7 +5,7 @@ const moment = require('moment');
 const FilteredSales = async (req, res) => {
     try {
         const { restaurantId, filteredDates, timeRange } = req.query;
-    
+    console.log(req.query)
         // Parse the start and end times from timeRange
         const [minTime, maxTime] = timeRange.split('-').map(time => time.trim());
     
@@ -26,7 +26,7 @@ const FilteredSales = async (req, res) => {
         };
     
         // Fetch data from the database
-        const filteredData = await YourModel.find({
+        const filteredData = await Sales.find({
           restaurantId,
           ...dateQuery,
         });
