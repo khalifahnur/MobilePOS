@@ -5,7 +5,6 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SubContainer from "@/components/History/SubContainer";
 import { useLocalSearchParams } from "expo-router";
-import HistoryPlaceholder from "@/components/HistoryPlaceholder";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
@@ -55,6 +54,7 @@ export default function HistoryScreen() {
       </View>
     );
   }
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={false} backgroundColor="#F2F4F7" style="dark" />
