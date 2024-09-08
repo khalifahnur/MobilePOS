@@ -1,24 +1,22 @@
-const mongoose = require("mongoose");
 const Menu = require("./path-to-your-model");
 
-// Function to update the name and cost of a specific item
 const updateItem = async (restaurantId, title, oldName, oldCost, newName, newCost) => {
   try {
     const result = await Menu.updateOne(
       {
         restaurantId: restaurantId,
-        "data.title": title, // Find the correct `data` array
-        "data.description.name": oldName, // Match the item by old name
-        "data.description.cost": oldCost, // Match the item by old cost
+        "data.title": title,
+        "data.description.name": oldName, 
+        "data.description.cost": oldCost,
       },
       {
         $set: {
-          "data.$[].description.$[desc].name": newName, // Update name
-          "data.$[].description.$[desc].cost": newCost, // Update cost
+          "data.$[].description.$[desc].name": newName,
+          "data.$[].description.$[desc].cost": newCost,
         },
       },
       {
-        arrayFilters: [{ "desc.name": oldName, "desc.cost": oldCost }], // Filter based on old name and cost
+        arrayFilters: [{ "desc.name": oldName, "desc.cost": oldCost }],
       }
     );
 
@@ -29,4 +27,5 @@ const updateItem = async (restaurantId, title, oldName, oldCost, newName, newCos
 };
 
 // Call the function with the required values
-updateItem("Beirut", "Main Dishes", "Chicken Burger", 1050, "Beef Burger", 1200);
+//updateItem("Beirut", "Main Dishes", "Chicken Burger", 1050, "Beef Burger", 1200);
+module.exports = {updateItem};
