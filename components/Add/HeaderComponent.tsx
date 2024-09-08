@@ -26,8 +26,8 @@ const styles = StyleSheet.create({
     },
     title:{
         fontSize:16,
-        fontWeight:'500',
-        color:'#ffff'
+        fontWeight:'400',
+        color:'#000'
     },
     
 })
