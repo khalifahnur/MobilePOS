@@ -1,31 +1,45 @@
-const menu = require("../models/Menu");
+const Menu = require("../models/Menu");
 
-const updateItem = async (restaurantId, title, oldName, oldCost, newName, newCost) => {
+const updateItem = async (req, res) => {
+  const { restaurantId, title, oldName, oldCost, newName, newCost } = req.body;
+
   try {
-    const result = await menu.updateOne(
+    const result = await Menu.updateOne(
       {
         restaurantId: restaurantId,
         "data.title": title,
-        "data.description.name": oldName, 
+        "data.description.name": oldName,
         "data.description.cost": oldCost,
       },
       {
         $set: {
-          "data.$[].description.$[desc].name": newName,
-          "data.$[].description.$[desc].cost": newCost,
+          "data.$[section].description.$[desc].name": newName,
+          "data.$[section].description.$[desc].cost": newCost,
         },
       },
       {
-        arrayFilters: [{ "desc.name": oldName, "desc.cost": oldCost }],
+        arrayFilters: [
+          { "section.title": title },
+          { "desc.name": oldName, "desc.cost": oldCost }
+        ],
       }
     );
 
-    console.log("Item updated:", result);
+    if (result.matchedCount === 0) {
+      // No matching document found
+      return res.status(404).json({ message: "No matching item found" });
+    }
+
+    if (result.modifiedCount === 0) {
+      // Document found but no updates made (name/cost may be the same)
+      return res.status(400).json({ message: "Item found but no changes made" });
+    }
+
+    // If both matched and modified counts are greater than 0
+    res.status(200).json({ message: "Item updated successfully", result });
   } catch (error) {
-    console.error("Error updating item:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Call the function with the required values
-//updateItem("Beirut", "Main Dishes", "Chicken Burger", 1050, "Beef Burger", 1200);
-module.exports = {updateItem};
+module.exports = { updateItem };
