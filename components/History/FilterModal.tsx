@@ -6,6 +6,7 @@ import {
   View,
   Pressable,
   ScrollView,
+  FlatList,
 } from "react-native";
 import Modal, {
   BottomModal,
@@ -33,7 +34,11 @@ export default function FilterModal({
   const [restaurantId, setrestaurantId] = useState();
 
   const FilteredDates = Object.keys(selectedDates);
-console.log(FilteredDates)
+
+  const [filterData,setFilteredData] = useState();
+  const [secondModalVisible,setSecondModalVisible] = useState(false);
+
+
   const AM = [
     { id: 1, am: "00-03 hrs" },
     { id: 2, am: "03-06 hrs" },
@@ -76,8 +81,17 @@ console.log(FilteredDates)
             timeRange: selectedTime,
           }
         });
-  
-        console.log(response.data);
+        const filteredData = JSON.stringify(response.data);
+
+        // Navigate to another screen with filteredData as a parameter
+        setModalFilterVisible(false)
+        setSecondModalVisible(true);
+        router.push({
+            pathname: '/screens/filter', // The target screen for filtered results
+            params: {
+              data: JSON.stringify(filteredData), // Pass filtered data
+            },
+          });
       } catch (error:any) {
         console.error('Error fetching filtered data:', error.response ? error.response.data : error.message);
       }
@@ -97,6 +111,7 @@ console.log(FilteredDates)
   }, []);
 
   return (
+    <>
     <BottomModal
       visible={modalFilterVisible}
       swipeDirection={["up", "down"]}
@@ -215,6 +230,8 @@ console.log(FilteredDates)
         </Pressable>
       </ModalFooter>
     </BottomModal>
+    
+    </>
   );
 }
 
@@ -299,4 +316,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
+  
 });
