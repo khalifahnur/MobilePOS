@@ -10,7 +10,7 @@ import React, { useRef, useState } from "react";
 import Search from "./Search";
 import HeaderTitle from "./HeaderTitle";
 import HeaderContentTitle from "./HeaderContentTitle";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
 
 type FetchedDataProps = {
@@ -35,6 +35,7 @@ export default function SubContainer({FetchedData}:FetchedDataProps) {
   const router = useRouter();
   const scrollY = useRef(new Animated.Value(0)).current;
   const listRef = useRef<Animated.FlatList | null>(null);
+  
 
   const [customHeight, setCustomHeight] = useState({
     HeaderTitleHeight: 0,
