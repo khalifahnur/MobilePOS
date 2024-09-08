@@ -30,6 +30,9 @@ export default function Search({
   const HandleFilterData = ()=>{
     router.navigate("/screens/filter")
   }
+  const HandleFilterModal = ()=>{
+    setFilterModal(true)
+  }
   return (
     <>
     <Animated.View
@@ -61,7 +64,7 @@ export default function Search({
         </View>
         <View style={{flexDirection:'row',gap:10,marginLeft:5}}>
           <TouchableOpacity
-          onPress={HandleFilterData}
+          onPress={HandleFilterModal}
             style={{ padding: 15, backgroundColor: "#e8e8e8", borderRadius: 20 }}
           >
             <Ionicons name="filter" size={15} color="black" />
