@@ -69,7 +69,6 @@ export default function AddScreen({onClose}:AddScreenProps) {
     );
   }
 
-  console.log(data)
 
   return (
     <SafeAreaView style={styles.container}>
@@ -89,7 +88,7 @@ export default function AddScreen({onClose}:AddScreenProps) {
         </View>
         <HeaderComponent />
         {/* <AddContainer /> */}
-        <ManageProduct />
+        <ManageProduct fetchedData={data}/>
 
       </ThemedView>
       
@@ -112,7 +111,7 @@ const styles = StyleSheet.create({
   },
   HeaderTxt:{
     fontSize:18,
-    fontWeight:'600',
+    fontWeight:'400',
   },
   headerBtn:{
     padding:10,
