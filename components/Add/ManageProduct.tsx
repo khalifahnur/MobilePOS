@@ -4,16 +4,50 @@ import data from '../Data';
 import HeaderComponent from './HeaderComponent';
 import { AntDesign, Feather } from '@expo/vector-icons';
 
-export default function ManageProduct() {
+export default function ManageProduct({fetchedData}) {
   const listRef = useRef<Animated.FlatList | null>(null);
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollY = useRef(new Animated.Value(0)).current
+
+  const groupedData = fetchedData?.reduce((acc, item) => {
+    const dataItems = item.data || [];
+    
+    dataItems.forEach(dataItem => {
+      //console.log('Processing data item:', dataItem); // Log each data item to understand its structure
+      
+      const title = dataItem?.title?.toUpperCase() || 'UNKNOWN';
+      const descriptionData = (dataItem?.description || []).map(desc => ({
+        id: dataItem._id || 'UNKNOWN_ID', 
+        name: desc.name || 'No Name',
+        quantity: desc.quantity || '0',
+        cost: (desc.cost /100).toFixed(2) || '0',
+        image: { uri: desc.image },
+      }));
+  
+      const existingCategory = acc?.find(cat => cat?.title === title);
+  
+      if (existingCategory) {
+        existingCategory.description.push(...descriptionData);
+      } else {
+        acc.push({
+          id: dataItem._id || 'UNKNOWN_ID',
+          title,
+          description: descriptionData
+        });
+      }
+    });
+  
+    return acc;
+  }, []);
+
+//console.log(fetchedData);
 
   return (
     <View>
       <Animated.FlatList
         ref={listRef}
-        data={data}
-        renderItem={({ item, index }) => (
+        data={groupedData}
+        renderItem={({ item, index }) => {
+          return(
           <View key={index}>
             <View style={{ backgroundColor: "#ffff", padding: 10 }}>
               <Text style={styles.Title}>{item.title}</Text>
@@ -66,7 +100,7 @@ export default function ManageProduct() {
               ))}
             </View>
           </View>
-        )}
+        )}}
        // ListHeaderComponent={HeaderComponent}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
