@@ -33,7 +33,7 @@ mongoose
 app.use("/api/auth", AuthRoute);
 app.use("/api/menu", MenuRoute);
 app.use("/api/data", MenuRoute);
-app.use("/api/sales",SalesRoute)
+app.use("/api/sales",SalesRoute);
 
 //event listener of connection
 
