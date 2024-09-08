@@ -1,19 +1,17 @@
-const Menu = require("../models/menu"); // Import the Menu model
+const menu = require("../models/Menu");
 
-// Controller to remove an item by `id`
 const removeItem = async (req, res) => {
-  const { restaurantId, title, itemId } = req.body; // Extract data from the request body
+  const { restaurantId, title, itemId } = req.body; 
 
   try {
-    // Update the menu and remove the item from the `description` array using its id
-    const result = await Menu.updateOne(
+    const result = await menu.updateOne(
       {
-        restaurantId: restaurantId, // Match restaurantId
-        "data.title": title, // Match the section title
+        restaurantId: restaurantId,
+        "data.title": title,
       },
       {
         $pull: {
-          "data.$.description": { _id: itemId }, // Remove the item based on its `_id`
+          "data.$.description": { _id: itemId },
         },
       }
     );
