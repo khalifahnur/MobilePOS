@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -15,6 +15,8 @@ import Modal, {
 import { AntDesign } from "@expo/vector-icons";
 import { Calendar } from "react-native-calendars";
 import { useRouter } from "expo-router";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type ModalFilterProps = {
   modalFilterVisible: boolean;
@@ -28,6 +30,7 @@ export default function FilterModal({
   const [selectedDates, setSelectedDates] = useState({});
   const [selectedTimePeriod, setSelectedTimePeriod] = useState("AM");
   const [selectedTime, setSelectedTime] = useState("");
+  const [restaurantId, setrestaurantId] = useState();
 
   const FilteredDates = Object.keys(selectedDates);
 console.log(FilteredDates)
@@ -63,18 +66,35 @@ console.log(FilteredDates)
     setSelectedTime("");
   };
 
-  const handleFilter = () => {
-    if (FilteredDates && selectedTime) {
-      router.push({
-        pathname: "/history",
-        params: {
-          FilteredDates: JSON.stringify(FilteredDates),
-          selectedCost: selectedCost.toString(),
-          selectedTime: selectedTime,
-        },
-      });
+  const HandleFilter = async() => {
+    if (FilteredDates && selectedTime && restaurantId) {
+      try {
+        const response = await axios.get("http://192.168.100.198:3002/api/sales/filteredSales", {
+          params: {
+            restaurantId,
+            filteredDates: JSON.stringify(FilteredDates),
+            timeRange: selectedTime,
+          }
+        });
+  
+        console.log(response.data);
+      } catch (error:any) {
+        console.error('Error fetching filtered data:', error.response ? error.response.data : error.message);
+      }
     }
   };
+  
+
+  useEffect(() => {
+    const FetchData = async () => {
+      const userRawObj = await AsyncStorage.getItem("User");
+      if (userRawObj) {
+        const userObj = JSON.parse(userRawObj);
+        setrestaurantId(userObj.restaurantId);
+      }
+    };
+    FetchData();
+  }, []);
 
   return (
     <BottomModal
@@ -190,7 +210,7 @@ console.log(FilteredDates)
         <Pressable style={styles.footerButton} onPress={handleReset}>
           <Text style={styles.footerButtonText}>Reset</Text>
         </Pressable>
-        <Pressable style={styles.footerButton}>
+        <Pressable style={styles.footerButton} onPress={HandleFilter}>
           <Text style={styles.footerButtonText}>Apply Filters</Text>
         </Pressable>
       </ModalFooter>

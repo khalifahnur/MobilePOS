@@ -1,33 +1,17 @@
 import {
   Animated,
-  FlatList,
   LayoutChangeEvent,
-  Modal,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import React, { useRef, useState } from "react";
-// import HistoryPlaceholder from "../HistoryPlaceholder";
 import Search from "./Search";
 import HeaderTitle from "./HeaderTitle";
 import HeaderContentTitle from "./HeaderContentTitle";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import ModalDetails from "./ModalDetails";
+import { useRouter } from "expo-router";
 
-type HistoryPlaceholderItem = {
-  id: number;
-  itemId: string;
-  name: string;
-  date: string;
-  quantity: number;
-  cost: number;
-};
-
-type HistoryPlaceholderProps = {
-  HistoryPlaceholder: HistoryPlaceholderItem[];
-};
 
 type FetchedDataProps = {
   FetchedData: {
@@ -47,12 +31,7 @@ type FetchedDataProps = {
   }[];
 };
 
-type SubContainerProps = HistoryPlaceholderProps & FetchedDataProps;
-
 export default function SubContainer({FetchedData}:FetchedDataProps) {
-  const [modalDetailsVisible,setModalDetailsVisible] = useState<boolean>(false);
-  
-
   const router = useRouter();
   const scrollY = useRef(new Animated.Value(0)).current;
   const listRef = useRef<Animated.FlatList | null>(null);
