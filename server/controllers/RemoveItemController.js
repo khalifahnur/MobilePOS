@@ -1,7 +1,7 @@
 const Menu = require("../models/menu"); // Import the Menu model
 
 // Controller to remove an item by `id`
-const removeItemById = async (req, res) => {
+const removeItem = async (req, res) => {
   const { restaurantId, title, itemId } = req.body; // Extract data from the request body
 
   try {
@@ -28,4 +28,4 @@ const removeItemById = async (req, res) => {
   }
 };
 
-module.exports = { removeItemById };
+module.exports = { removeItem};
