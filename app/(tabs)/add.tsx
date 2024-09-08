@@ -1,5 +1,5 @@
-import {Pressable, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import {ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import AddContainer from '@/components/Add/AddContainer'
 import { StatusBar } from 'expo-status-bar'
 import { ThemedView } from '@/components/ThemedView'
@@ -9,6 +9,8 @@ import ManageProduct from '@/components/Add/ManageProduct'
 import { Ionicons } from '@expo/vector-icons'
 import HeaderComponent from '@/components/Add/HeaderComponent'
 import { useRouter } from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import axios from 'axios'
 
 type AddScreenProps = {
   onClose: () => void;
@@ -16,6 +18,59 @@ type AddScreenProps = {
 
 export default function AddScreen({onClose}:AddScreenProps) {
   const router = useRouter();
+
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [restaurantName, setRestaurantName] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchRestaurantNameAndData = async () => {
+      try {
+        const userRawObj = await AsyncStorage.getItem("User");
+        if (userRawObj) {
+          const userObj = JSON.parse(userRawObj);
+          if (userObj?.restaurantId) {
+            setRestaurantName(userObj.restaurantId);
+            const response = await axios.get("http://192.168.100.198:3002/api/data/fetchMenu", {
+              params: { restaurantId: userObj.restaurantId },
+            });
+            setData(response.data);
+          } else {
+            setError("Restaurant ID is missing");
+          }
+        } else {
+          setError("User data not found");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError("Failed to fetch data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRestaurantNameAndData();
+  }, [data]);
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text>{error}</Text>
+      </View>
+    );
+  }
+
+  console.log(data)
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor='black' />
@@ -65,5 +120,11 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     alignItems:'center',
     borderRadius:8,
-  }
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor:'#f2f4f7'
+  },
 })
