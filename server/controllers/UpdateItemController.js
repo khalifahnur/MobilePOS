@@ -1,8 +1,8 @@
-const Menu = require("./path-to-your-model");
+const menu = require("../models/Menu");
 
 const updateItem = async (restaurantId, title, oldName, oldCost, newName, newCost) => {
   try {
-    const result = await Menu.updateOne(
+    const result = await menu.updateOne(
       {
         restaurantId: restaurantId,
         "data.title": title,
