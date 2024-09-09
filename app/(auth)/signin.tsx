@@ -123,6 +123,7 @@ export default function SigninScreen() {
   
 
   const handleLogin = async () => {
+    const localhost = process.env.LOCALHOST;
     const isEmailValid = emailValidation(email);
     const isPasswordValid = passwordValidation(password);
     setLoadingBtn(true);
@@ -141,7 +142,7 @@ export default function SigninScreen() {
     console.log(user);
   
     try {
-      const response = await axios.post("http://192.168.100.198:3002/api/auth/SignIn", user);
+      const response = await axios.post("http://192.168.100.200:3002/api/auth/SignIn", user);
   
       const token = response.data.token;
       const userObj = response.data.user;
