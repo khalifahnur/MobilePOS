@@ -32,7 +32,7 @@ export default function AddScreen({onClose}:AddScreenProps) {
           const userObj = JSON.parse(userRawObj);
           if (userObj?.restaurantId) {
             setRestaurantName(userObj.restaurantId);
-            const response = await axios.get("http://192.168.100.198:3002/api/data/fetchMenu", {
+            const response = await axios.get("http://192.168.100.200:3002/api/data/fetchMenu", {
               params: { restaurantId: userObj.restaurantId },
             });
             setData(response.data);

@@ -28,7 +28,7 @@ export default function HistoryScreen() {
     const FetchSales = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.100.198:3002/api/sales/fetchSales", 
+          "http://192.168.100.200:3002/api/sales/fetchSales", 
           { params: { restaurantId } }
         );
         if (response.status === 200) {
