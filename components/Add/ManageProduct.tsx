@@ -1,12 +1,20 @@
-import { Animated, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useRef } from 'react'
-import data from '../Data';
-import HeaderComponent from './HeaderComponent';
+import { Animated, Image, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useRef, useState } from 'react'
 import { AntDesign, Feather } from '@expo/vector-icons';
+import axios from 'axios';
+import EditModal from './EditModal';
+
+type modalProps = {
+  name:string;
+  cost:number;
+  title:string;
+}
 
 export default function ManageProduct({fetchedData}) {
   const listRef = useRef<Animated.FlatList | null>(null);
-  const scrollY = useRef(new Animated.Value(0)).current
+
+  const [modalData, setModalData] = useState<modalProps | null>(null);
+  const [modalVisible,setModalVisible] = useState(false);
 
   const groupedData = fetchedData?.reduce((acc, item) => {
     const dataItems = item.data || [];
@@ -39,7 +47,11 @@ export default function ManageProduct({fetchedData}) {
     return acc;
   }, []);
 
-//console.log(fetchedData);
+  const HandleModal = ({title,name,cost}:modalProps)=>{
+    setModalData({title,name,cost})
+    setModalVisible(true)
+  }
+  
 
   return (
     <View>
@@ -84,7 +96,7 @@ export default function ManageProduct({fetchedData}) {
 
                     {/* action part */}
                     <View style={styles.actionSection}>
-                      <TouchableOpacity style={styles.btn}>
+                      <TouchableOpacity style={styles.btn} onPress={() => HandleModal({title:item.title,name: descItem.name, cost: parseFloat(descItem.cost) })}>
                         <Feather name="edit-2" size={20} color="black" />
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.btn}>
@@ -101,15 +113,12 @@ export default function ManageProduct({fetchedData}) {
             </View>
           </View>
         )}}
-       // ListHeaderComponent={HeaderComponent}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          {
-            useNativeDriver: true,
-          }
-        )}
+       
         keyExtractor={(item, index) => index.toString()}
       />
+      <Modal visible={modalVisible} style={styles.modal}>
+         <EditModal data={modalData} onClose={()=>setModalVisible(false)} />
+      </Modal>
     </View>
   )
 }
@@ -170,5 +179,9 @@ const styles = StyleSheet.create({
     padding:10,
     backgroundColor:'#fff',
     borderRadius:20
+  },
+  modal: {
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
