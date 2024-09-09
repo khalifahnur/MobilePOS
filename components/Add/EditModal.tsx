@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import InputField from "../InputField";
 import axios from "axios";
@@ -25,11 +25,12 @@ export default function EditModal({ data, onClose }: editModalProps) {
     const oldCost = data?.cost;
     const newName = newNme;
     const newCost = newPrce;
+    console.log(title,restaurantId,oldName,newCost)
 
     if (restaurantId && title && oldName && oldCost && newName && newCost) {
       try {
         const response = await axios.put(
-          "http://192.168.100.200:3002/api/menu/updateItem",
+          "http://192.168.100.200:3002/api/menu/update",
           {
             restaurantId,
             title,
@@ -40,7 +41,13 @@ export default function EditModal({ data, onClose }: editModalProps) {
           }
         );
 
-        console.log("Item updated:", response.data);
+        if(response.status === 200){
+            Alert.alert("Item updated:")
+        }else if(response.status === 404){
+            Alert.alert("No matching item found")
+        }else{
+            Alert.alert("Something else occured")
+        }
       } catch (error: any) {
         console.error(
           "Error updating item:",
@@ -88,7 +95,7 @@ export default function EditModal({ data, onClose }: editModalProps) {
         >
           <Text style={styles.buttonText}>Cancel</Text>
         </Pressable>
-        <Pressable style={[styles.btns, { backgroundColor: "#4d81f1" }]}>
+        <Pressable style={[styles.btns, { backgroundColor: "#4d81f1" }]} onPress={HandleUpdateItem}>
           <Text style={styles.buttonText}>Change</Text>
         </Pressable>
       </View>
