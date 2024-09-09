@@ -11,7 +11,7 @@ import { Feather } from "@expo/vector-icons";
 
 type InputProps = TextInputProps & {
   labelTxt: string;
-  type: "email" | "text" | "password";
+  type: "email" | "text" | "password" | "number";
   error?:boolean
 };
 
