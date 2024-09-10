@@ -2,7 +2,7 @@ const Menu = require("../models/Menu");
 
 const updateItem = async (req, res) => {
   const { restaurantId, title, oldName, oldCost, newName, newCost } = req.body;
-
+  console.log(req.body);
   try {
     const result = await Menu.updateOne(
       {
