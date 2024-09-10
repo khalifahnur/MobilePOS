@@ -12,7 +12,6 @@ import HeaderTitle from "./HeaderTitle";
 import HeaderContentTitle from "./HeaderContentTitle";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
-
 type FetchedDataProps = {
   FetchedData: {
     id: string;
@@ -31,11 +30,10 @@ type FetchedDataProps = {
   }[];
 };
 
-export default function SubContainer({FetchedData}:FetchedDataProps) {
+export default function SubContainer({ FetchedData }: FetchedDataProps) {
   const router = useRouter();
   const scrollY = useRef(new Animated.Value(0)).current;
   const listRef = useRef<Animated.FlatList | null>(null);
-  
 
   const [customHeight, setCustomHeight] = useState({
     HeaderTitleHeight: 0,
@@ -64,20 +62,19 @@ export default function SubContainer({FetchedData}:FetchedDataProps) {
     });
   };
 
-
-
   // Check if FetchedData is a string, then parse it to JSON
-const parsedData = typeof FetchedData === 'string' ? JSON.parse(FetchedData) : FetchedData;
+  const parsedData =
+    typeof FetchedData === "string" ? JSON.parse(FetchedData) : FetchedData;
 
-const HandleModalDetails =(data)=>{
-  console.log("Modal data",data)
-  router.push({
-    pathname:'/screens/details',
-    params:{
-      data: JSON.stringify(data)
-      
-    }})
-}
+  const HandleModalDetails = (data) => {
+    console.log("Modal data", data);
+    router.push({
+      pathname: "/screens/details",
+      params: {
+        data: JSON.stringify(data),
+      },
+    });
+  };
 
   return (
     <View style={styles.Container}>
@@ -92,24 +89,21 @@ const HandleModalDetails =(data)=>{
                   inputRange: [
                     0,
                     customHeight.HeaderTitleHeight +
-                    customHeight.headerContentTitleHeight +
-                    customHeight.searchHeader,
+                      customHeight.headerContentTitleHeight +
+                      customHeight.searchHeader,
                   ],
-                  outputRange: [
-                    0,
-                    -10,
-                  ],
+                  outputRange: [0, -10],
                   extrapolate: "clamp",
                 }),
               },
             ],
           },
           {
-            marginBottom:customHeight.searchHeader,
-            zIndex:999,
-            alignItems:'center',
-            backgroundColor:'#F2F4F7'
-          }
+            marginBottom: customHeight.searchHeader,
+            zIndex: 999,
+            alignItems: "center",
+            backgroundColor: "#F2F4F7",
+          },
         ]}
       >
         <HeaderTitle HeaderTitleLayout={onLayoutStickyHeaderTitle} />
@@ -125,25 +119,20 @@ const HandleModalDetails =(data)=>{
                   inputRange: [
                     0,
                     customHeight.HeaderTitleHeight +
-                    customHeight.headerContentTitleHeight +
-                    customHeight.searchHeader,
+                      customHeight.headerContentTitleHeight +
+                      customHeight.searchHeader,
                   ],
-                  outputRange: [
-                    0,
-                    -(
-                      customHeight.searchHeader+15 ),
-                  ],
+                  outputRange: [0, -(customHeight.searchHeader + 15)],
                   extrapolate: "clamp",
                 }),
               },
             ],
           },
           {
-            marginTop:customHeight.HeaderTitleHeight + customHeight.searchHeader,
-            zIndex:999,
-            
-            
-          }
+            marginTop:
+              customHeight.HeaderTitleHeight + customHeight.searchHeader,
+            zIndex: 999,
+          },
         ]}
       >
         <HeaderContentTitle
@@ -151,99 +140,97 @@ const HandleModalDetails =(data)=>{
         />
       </Animated.View>
 
-      { FetchedData?.length > 0 ? (
-      <Animated.FlatList
-  ref={listRef}
-  data={parsedData}
-  renderItem={({ item, index }) => {
-    const createdAtDate = new Date(item?.createdAt);
-    return (
-      <>
-        <View key={item?._id} style={{ paddingHorizontal: 20 }}>
-          <TouchableOpacity
-          onPress={()=>HandleModalDetails(item)}
-            style={[
-              styles.Content,
-              {
-                backgroundColor: index % 2 === 0 ? "#cce9d5" : "#ffff",
-                borderRadius: 8,
-              },
-            ]}
-          >
-            {/* Check if data is valid */}
-            <Text style={styles.ContentText}># {item?._id.slice(-4,-1)} </Text>
-            <Text style={styles.ContentText}>
-              {/* Ensure valid date */}
-              {isNaN(createdAtDate.getTime())
-                ? "Invalid Date"
-                : createdAtDate.toLocaleString()}
-            </Text>
-            <Text style={styles.ContentText}>{item?.totalCost}</Text>
-          </TouchableOpacity>
+      {FetchedData?.length > 0 ? (
+        <Animated.FlatList
+          ref={listRef}
+          data={parsedData}
+          renderItem={({ item, index }) => {
+            const createdAtDate = new Date(item?.createdAt);
+            return (
+              <>
+                <View key={item?._id} style={{ paddingHorizontal: 20 }}>
+                  <TouchableOpacity
+                    onPress={() => HandleModalDetails(item)}
+                    style={[
+                      styles.Content,
+                      {
+                        backgroundColor: index % 2 === 0 ? "#cce9d5" : "#ffff",
+                        borderRadius: 8,
+                      },
+                    ]}
+                  >
+                    {/* Check if data is valid */}
+                    <Text style={styles.ContentText}>
+                      # {item?._id.slice(-4, -1)}{" "}
+                    </Text>
+                    <Text style={styles.ContentText}>
+                      {/* Ensure valid date */}
+                      {isNaN(createdAtDate.getTime())
+                        ? "Invalid Date"
+                        : createdAtDate.toLocaleString()}
+                    </Text>
+                    <Text style={styles.ContentText}>{item?.totalCost}</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.Divider} />
+              </>
+            );
+          }}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true }
+          )}
+          ListHeaderComponent={
+            <Search
+              onLayoutSearch={onLayoutSearchHeader}
+              searchMarginTopStyle={customHeight.HeaderTitleHeight}
+              searchMarginBottomStyle={customHeight.headerContentTitleHeight}
+            />
+          }
+          showsVerticalScrollIndicator={false}
+        />
+      ) : (
+        <View>
+          <Text>Filtered data:null</Text>
         </View>
-        <View style={styles.Divider} />
-      </>
-    );
-  }}
-  onScroll={Animated.event(
-    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-    { useNativeDriver: true }
-  )}
-  ListHeaderComponent={
-    <Search
-      onLayoutSearch={onLayoutSearchHeader}
-      searchMarginTopStyle={customHeight.HeaderTitleHeight}
-      searchMarginBottomStyle={customHeight.headerContentTitleHeight}
-    />
-  }
-  showsVerticalScrollIndicator={false}
-/>
-
- ) : (
-  <View>
-    <Text>Filtered data:null</Text>
-  </View>
-  // <Animated.FlatList
-  //   ref={listRef}
-  //   data={HistoryPlaceholder}
-  //   renderItem={({ item, index }) => (
-  //     <>
-  //       <View key={item.id} style={{ paddingHorizontal: 20 }}>
-  //         <TouchableOpacity
-  //           onPress={() => HandleModalDetails(item)}
-  //           style={[
-  //             styles.Content,
-  //             {
-  //               backgroundColor: index % 2 === 0 ? "#cce9d5" : "#ffff",
-  //               borderRadius: 8,
-  //             },
-  //           ]}
-  //         >
-  //           <Text style={styles.ContentText}>{item.itemId}</Text>
-  //           <Text style={styles.ContentText}>{item.date}</Text>
-  //           <Text style={styles.ContentText}>{item.cost}</Text>
-  //         </TouchableOpacity>
-  //       </View>
-  //       <View style={styles.Divider} />
-  //     </>
-  //   )}
-  //   onScroll={Animated.event(
-  //     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-  //     { useNativeDriver: true }
-  //   )}
-  //   ListHeaderComponent={
-  //     <Search
-  //       onLayoutSearch={onLayoutSearchHeader}
-  //       searchMarginTopStyle={customHeight.HeaderTitleHeight}
-  //       searchMarginBottomStyle={customHeight.headerContentTitleHeight}
-  //     />
-  //   }
-  //   showsVerticalScrollIndicator={false}
-  // />
-)}
-
-      
-      
+        // <Animated.FlatList
+        //   ref={listRef}
+        //   data={HistoryPlaceholder}
+        //   renderItem={({ item, index }) => (
+        //     <>
+        //       <View key={item.id} style={{ paddingHorizontal: 20 }}>
+        //         <TouchableOpacity
+        //           onPress={() => HandleModalDetails(item)}
+        //           style={[
+        //             styles.Content,
+        //             {
+        //               backgroundColor: index % 2 === 0 ? "#cce9d5" : "#ffff",
+        //               borderRadius: 8,
+        //             },
+        //           ]}
+        //         >
+        //           <Text style={styles.ContentText}>{item.itemId}</Text>
+        //           <Text style={styles.ContentText}>{item.date}</Text>
+        //           <Text style={styles.ContentText}>{item.cost}</Text>
+        //         </TouchableOpacity>
+        //       </View>
+        //       <View style={styles.Divider} />
+        //     </>
+        //   )}
+        //   onScroll={Animated.event(
+        //     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+        //     { useNativeDriver: true }
+        //   )}
+        //   ListHeaderComponent={
+        //     <Search
+        //       onLayoutSearch={onLayoutSearchHeader}
+        //       searchMarginTopStyle={customHeight.HeaderTitleHeight}
+        //       searchMarginBottomStyle={customHeight.headerContentTitleHeight}
+        //     />
+        //   }
+        //   showsVerticalScrollIndicator={false}
+        // />
+      )}
     </View>
   );
 }
@@ -275,7 +262,7 @@ const styles = StyleSheet.create({
   StickyHeader: {
     top: 0,
     left: 0,
-    right:0,
+    right: 0,
     position: "absolute",
     shadowColor: "#fff",
     shadowRadius: 5,
