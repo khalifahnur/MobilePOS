@@ -10,6 +10,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { LineChart } from "react-native-gifted-charts";
 import PieChartComponent from "./PieChartComponent";
 import { FontAwesome6 } from "@expo/vector-icons";
+import moment from "moment";
 
 const ScrollTabs = () => {
   const tabsScrollView = useRef<FlatList>(null);
@@ -122,7 +123,8 @@ const TrendingDishesCard = () => {
   );
 };
 
-export default function SubContainer() {
+export default function SubContainer({sales}) {
+  const Sales = JSON.parse(sales);
   const data = [
     { value: 1050, label: "Mon" },
     { value: 3000, label: "Tue" },
@@ -145,6 +147,30 @@ export default function SubContainer() {
     "3250",
     "3600",
   ];
+
+
+  const salesByDay: { [key: string]: number } = {
+    Monday: 0,
+    Tuesday: 0,
+    Wednesday: 0,
+    Thursday: 0,
+    Friday: 0,
+    Saturday: 0,
+    Sunday: 0,
+  };
+  
+  // Group sales by day of the week
+  Sales.forEach(sale => {
+    const dayOfWeek = moment(sale.createdAt).format('dddd');
+    salesByDay[dayOfWeek] += sale.totalCost;
+  });
+  
+  console.log(salesByDay);
+
+  if (!Array.isArray(JSON.parse(sales))) {
+    console.error('Sales data is not an array or is undefined:', sales);
+    return;
+  }
 
 
   return (
