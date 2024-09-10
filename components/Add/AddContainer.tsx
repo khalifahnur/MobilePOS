@@ -110,7 +110,7 @@ export default function AddContainer() {
   const HandleSaveMenu = async () => {
     setLoading(true)
     try {
-      const response = await axios.post("http://192.168.100.203:3002/api/menu/createMenu", {
+      const response = await axios.post("http://192.168.100.200:3002/api/menu/createMenu", {
         restaurantId,
         title: category,
         name: title,
