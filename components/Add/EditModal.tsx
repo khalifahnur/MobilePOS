@@ -22,7 +22,7 @@ export default function EditModal({ data, onClose }: editModalProps) {
   const HandleUpdateItem = async () => {
     const title = data?.title;
     const oldName = data?.name;
-    const oldCost = data?.cost;
+    const oldCost = data?.cost * 100;
     const newName = newNme;
     const newCost = newPrce;
     console.log(title,restaurantId,oldName,newCost)
@@ -43,6 +43,7 @@ export default function EditModal({ data, onClose }: editModalProps) {
 
         if(response.status === 200){
             Alert.alert("Item updated:")
+            onClose();
         }else if(response.status === 404){
             Alert.alert("No matching item found")
         }else{
