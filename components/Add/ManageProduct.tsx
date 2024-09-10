@@ -37,10 +37,10 @@ export default function ManageProduct({ fetchedData }) {
 
       const title = dataItem?.title?.toUpperCase() || "UNKNOWN";
       const descriptionData = (dataItem?.description || []).map((desc) => ({
-        id: dataItem._id || "UNKNOWN_ID",
-        name: desc.name || "No Name",
-        quantity: desc.quantity || "0",
-        cost: (desc.cost / 100).toFixed(2) || "0",
+        id: dataItem._id || "",
+        name: desc.name || "",
+        quantity: desc.quantity || "",
+        cost: (desc.cost / 100).toFixed(2) || "",
         image: { uri: desc.image },
       }));
 
@@ -77,12 +77,12 @@ export default function ManageProduct({ fetchedData }) {
           },
         }
       );
-      
+
       if (response.status === 200) {
         Alert.alert("Success", "Item removed successfully");
         setReload(!reload);
       }
-    } catch (error:any) {
+    } catch (error: any) {
       if (error.response) {
         if (error.response.status === 404) {
           Alert.alert("Error", "Item not found");
@@ -96,7 +96,6 @@ export default function ManageProduct({ fetchedData }) {
       }
     }
   };
-  
 
   useEffect(() => {
     const FetchData = async () => {
@@ -108,10 +107,6 @@ export default function ManageProduct({ fetchedData }) {
     };
     FetchData();
   }, []);
-
-  const capitalizeFirstLetter = (txt:string) => {
-    return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();
-  };
 
   return (
     <View>
@@ -171,7 +166,7 @@ export default function ManageProduct({ fetchedData }) {
                           style={styles.btn}
                           onPress={() =>
                             HandleRemoveItem({
-                              title: capitalizeFirstLetter(item.title),
+                              title: item.title,
                               id: item.id,
                             })
                           }
