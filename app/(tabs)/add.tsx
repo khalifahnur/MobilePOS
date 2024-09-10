@@ -74,7 +74,7 @@ export default function AddScreen({onClose}:AddScreenProps) {
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor='black' />
       <ThemedView
-        style={styles.container}
+        style={[styles.container,{ borderTopWidth: 2, borderTopColor: "#E8E8E8", marginBottom: 200 }]}
         lightColor="#F2F4F7"
       >
         <View style={styles.header}>
