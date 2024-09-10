@@ -7,8 +7,8 @@ const UpdateController = require("../controllers/UpdateItemController")
 
 router.post("/createMenu", MenuController.createMenu);
 router.get("/fetchMenu",FetchMenuController.FetchMenu);
-router.post("/remove",RemoveController.removeItem);
-router.post("/update",UpdateController.updateItem);
+router.delete("/remove",RemoveController.removeItem);
+router.put("/update",UpdateController.updateItem);
 
 
 module.exports = router;
