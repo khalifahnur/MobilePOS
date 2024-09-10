@@ -1,4 +1,5 @@
 import {
+  Alert,
   Animated,
   Image,
   Modal,
@@ -8,10 +9,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import axios from "axios";
 import EditModal from "./EditModal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type modalProps = {
   name: string;
@@ -24,6 +26,8 @@ export default function ManageProduct({ fetchedData }) {
 
   const [modalData, setModalData] = useState<modalProps | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [restaurantId, setrestaurantId] = useState();
+  const [reload, setReload] = useState(false);
 
   const groupedData = fetchedData?.reduce((acc, item) => {
     const dataItems = item.data || [];
@@ -61,28 +65,53 @@ export default function ManageProduct({ fetchedData }) {
     setModalVisible(true);
   };
 
-  const handleRemoveItem = async (restaurantId, title, itemId) => {
+  const HandleRemoveItem = async ({ title, id }) => {
     try {
-      const response = await axios.post(
-        "http://192.168.100.198:3002/api/menu/removeItem",
+      const response = await axios.delete(
+        "http://192.168.100.200:3002/api/menu/remove",
         {
-          restaurantId,
-          title,
-          itemId,
+          data: {
+            restaurantId,
+            title,
+            id,
+          },
         }
       );
-
-      console.log("Item removed:", response.data);
-    } catch (error: any) {
-      console.error(
-        "Error removing item:",
-        error.response ? error.response.data : error.message
-      );
+      
+      if (response.status === 200) {
+        Alert.alert("Success", "Item removed successfully");
+        setReload(!reload);
+      }
+    } catch (error:any) {
+      if (error.response) {
+        if (error.response.status === 404) {
+          Alert.alert("Error", "Item not found");
+        } else if (error.response.status === 400) {
+          Alert.alert("Error", "Item not removed");
+        } else {
+          Alert.alert("Error", "Something went wrong. Please try again.");
+        }
+      } else {
+        Alert.alert("Error", "Network or server error.");
+      }
     }
   };
+  
 
-  // Example usage (button click or event)
-  // handleRemoveItem("Beirut", "Main Dishes", "66d9da1f041de7af12855c0c");
+  useEffect(() => {
+    const FetchData = async () => {
+      const userRawObj = await AsyncStorage.getItem("User");
+      if (userRawObj) {
+        const userObj = JSON.parse(userRawObj);
+        setrestaurantId(userObj.restaurantId);
+      }
+    };
+    FetchData();
+  }, []);
+
+  const capitalizeFirstLetter = (txt:string) => {
+    return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();
+  };
 
   return (
     <View>
@@ -138,7 +167,15 @@ export default function ManageProduct({ fetchedData }) {
                         >
                           <Feather name="edit-2" size={20} color="black" />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.btn}>
+                        <TouchableOpacity
+                          style={styles.btn}
+                          onPress={() =>
+                            HandleRemoveItem({
+                              title: capitalizeFirstLetter(item.title),
+                              id: item.id,
+                            })
+                          }
+                        >
                           <AntDesign name="delete" size={20} color="black" />
                         </TouchableOpacity>
                       </View>
