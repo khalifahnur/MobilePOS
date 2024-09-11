@@ -83,7 +83,7 @@ export default function signup() {
   };
 
   const handleRegister = async () => {
-    const localhost = Constants.expoConfig.extra.localhost;
+    const localhost = Constants.expoConfig?.extra?.localhost;
 
     const user = {
       name: fullname,

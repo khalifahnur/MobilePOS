@@ -126,7 +126,7 @@ export default function SigninScreen() {
   
 
   const handleLogin = async () => {
-    const localhost = Constants.expoConfig.extra.localhost;
+    const localhost = Constants.expoConfig?.extra?.localhost;
     const isEmailValid = emailValidation(email);
     const isPasswordValid = passwordValidation(password);
     setLoadingBtn(true);

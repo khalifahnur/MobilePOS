@@ -24,7 +24,7 @@ export default function RestaurantScreen() {
   const userId = user.user;
 
   const HandleRestaurantName = async () => {
-    const localhost = Constants.expoConfig.extra.localhost;
+    const localhost = Constants.expoConfig?.extra?.localhost;
     setLoading(true)
     const restaurantId = restaurantTxt;
     try {
