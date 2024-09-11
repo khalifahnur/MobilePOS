@@ -9,7 +9,7 @@ import {
   Keyboard,
   Alert,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HelloWave } from "@/components/HelloWave";
@@ -30,6 +30,7 @@ import Animated, {
 import axios, { AxiosError } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from 'expo-constants';
+import { useNavigation } from "@react-navigation/native";
 
 
 
@@ -109,19 +110,19 @@ export default function SigninScreen() {
     }
   };
 
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const token = await AsyncStorage.getItem("AuthToken");
-        if (token) {
-          router.replace("/(tabs)/");
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    checkLoginStatus();
-  }, []);
+  // useEffect(() => {
+  //   const checkLoginStatus = async () => {
+  //     try {
+  //       const token = await AsyncStorage.getItem("AuthToken");
+  //       if (token) {
+  //         router.replace("/(tabs)/");
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   checkLoginStatus();
+  // }, []);
 
   
 
@@ -190,6 +191,13 @@ export default function SigninScreen() {
       }
     }
   };
+
+  const navigation = useNavigation();
+  useLayoutEffect(()=>{
+    navigation.setOptions({
+      headerShown:false
+    })
+  },[])
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -357,7 +365,10 @@ export default function SigninScreen() {
                   />
                   <Text>Remember Me</Text>
                 </View>
-                <Text>Forgot Password ?</Text>
+                <Pressable onPress={()=>router.push('/(auth)/forgotpassword')}>
+                  <Text>Forgot Password ?</Text>
+                </Pressable>
+                
               </Animated.View>
 
               <Animated.View
@@ -390,7 +401,7 @@ export default function SigninScreen() {
               </Animated.View>
             </View>
 
-            <Animated.View
+            {/* <Animated.View
               entering={FadeInUp.duration(1150).delay(350).easing(Easing.ease)}
               style={{ marginTop: 20 }}
             >
@@ -404,20 +415,20 @@ export default function SigninScreen() {
               <View>
                 <SocialButtons />
               </View>
-            </Animated.View>
+            </Animated.View> */}
 
             <View
               style={{
-                paddingHorizontal: 20,
+                paddingHorizontal: 30,
                 alignItems: "center",
-                marginTop: 10,
+                marginTop: 40,
               }}
             >
               <View
                 style={{
                   borderWidth: 1,
                   borderColor: "#d4d4d4",
-                  width: "100%",
+                  width: "80%",
                   alignItems: "center",
                 }}
               />
