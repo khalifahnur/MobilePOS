@@ -1,16 +1,15 @@
 import {ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import AddContainer from '@/components/Add/AddContainer'
 import { StatusBar } from 'expo-status-bar'
 import { ThemedView } from '@/components/ThemedView'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import AntDesign from '@expo/vector-icons/AntDesign';
 import ManageProduct from '@/components/Add/ManageProduct'
 import { Ionicons } from '@expo/vector-icons'
 import HeaderComponent from '@/components/Add/HeaderComponent'
 import { useRouter } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
+import Constants from 'expo-constants'
 
 type AddScreenProps = {
   onClose: () => void;
@@ -23,7 +22,7 @@ export default function AddScreen({onClose}:AddScreenProps) {
   const [loading, setLoading] = useState(true);
   const [restaurantName, setRestaurantName] = useState(null);
   const [error, setError] = useState("");
-
+  const localhost = Constants.expoConfig?.extra?.localhost;
   useEffect(() => {
     const fetchRestaurantNameAndData = async () => {
       try {
@@ -32,7 +31,7 @@ export default function AddScreen({onClose}:AddScreenProps) {
           const userObj = JSON.parse(userRawObj);
           if (userObj?.restaurantId) {
             setRestaurantName(userObj.restaurantId);
-            const response = await axios.get("http://192.168.100.200:3002/api/data/fetchMenu", {
+            const response = await axios.get(`http://${localhost}:3002/api/data/fetchMenu`, {
               params: { restaurantId: userObj.restaurantId },
             });
             setData(response.data);

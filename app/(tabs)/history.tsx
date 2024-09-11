@@ -1,17 +1,18 @@
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SubContainer from "@/components/History/SubContainer";
-import { useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import Constants from "expo-constants";
 
 export default function HistoryScreen() {
   const [restaurantId, setrestaurantId] = useState();
   const [data,setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const localhost = Constants.expoConfig?.extra?.localhost;
 
   useEffect(() => {
     const FetchData = async () => {
@@ -28,7 +29,7 @@ export default function HistoryScreen() {
     const FetchSales = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.100.200:3002/api/sales/fetchSales", 
+          `http://${localhost}:3002/api/sales/fetchSales`, 
           { params: { restaurantId } }
         );
         if (response.status === 200) {

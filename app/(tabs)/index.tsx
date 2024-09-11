@@ -6,12 +6,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import SubContainer from "@/components/Home/SubContainer";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from 'expo-constants';
+
 
 export default function HomeScreen() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [restaurantName, setRestaurantName] = useState(null);
   const [error, setError] = useState("");
+  const localhost = Constants.expoConfig?.extra?.localhost;
+  
 
   useEffect(() => {
     const fetchRestaurantNameAndData = async () => {
@@ -21,7 +25,7 @@ export default function HomeScreen() {
           const userObj = JSON.parse(userRawObj);
           if (userObj?.restaurantId) {
             setRestaurantName(userObj.restaurantId);
-            const response = await axios.get("http://192.168.100.200:3002/api/data/fetchMenu", {
+            const response = await axios.get(`http://${localhost}:3002/api/data/fetchMenu`, {
               params: { restaurantId: userObj.restaurantId },
             });
             setData(response.data);
