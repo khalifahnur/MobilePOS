@@ -52,8 +52,8 @@ export default function VerifyScreen() {
       />
         </View>
 
-          <Pressable style={styles.resetbtn} >
-            <Text style={{color:'#fff'}}>Reset Password</Text>
+          <Pressable style={styles.resetbtn} onPress={()=>router.push("/(auth)/newpassword")} >
+            <Text style={{color:'#fff'}}>Continue</Text>
           </Pressable>
 
       </View>
