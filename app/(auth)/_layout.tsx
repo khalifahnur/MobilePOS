@@ -9,6 +9,7 @@ export default function AuthLayout() {
       <Stack.Screen name="restaurant" options={{ presentation:'modal',headerShown:false}} />
       <Stack.Screen name="forgotpassword" options={{ presentation:'modal',headerShown:false}} />
       <Stack.Screen name="codeverify" options={{ presentation:'modal',headerShown:false}} />
+      <Stack.Screen name="newpassword" options={{ presentation:'modal',headerShown:false}} />
     </Stack>
   );
 }
