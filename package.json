@@ -44,6 +44,7 @@
     "react-native-async-storage": "^0.0.1",
     "react-native-bouncy-checkbox": "^4.1.2",
     "react-native-calendars": "^1.1306.0",
+    "react-native-confirmation-code-field": "^7.4.0",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-gifted-charts": "^1.4.29",
     "react-native-international-phone-number": "^0.7.6",
