@@ -21,6 +21,7 @@ import WelcomeComponent from "@/components/WelcomeComponent";
 import Animated, { Easing, FadeInUp, FadeOutUp } from "react-native-reanimated";
 import axios from "axios";
 import PhoneNumberInp from "@/components/PhoneNumberInp";
+import Constants from "expo-constants";
 
 export default function signup() {
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -39,8 +40,6 @@ export default function signup() {
   function handlePhoneNumberChange(phoneNumber: string) {
     setPhoneNumber(phoneNumber);
   }
-
-  console.log("name","=>",fullname,"email","=>",email,"psswd","=>",psswd,"phoneNumber","=>",phoneNumber)
 
   const emailValidation = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -84,6 +83,8 @@ export default function signup() {
   };
 
   const handleRegister = async () => {
+    const localhost = Constants.expoConfig.extra.localhost;
+
     const user = {
       name: fullname,
       email: email,
@@ -101,7 +102,7 @@ export default function signup() {
 
     setLoadingBtn(true);
     try {
-      await axios.post("http://192.168.100.201:3002/api/auth/SignUp", user);
+      await axios.post(`http://${localhost}:3002/api/auth/SignUp`, user);
       setLoadingBtn(false);
       setTimeout(() => {
         Alert.alert(

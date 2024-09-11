@@ -29,6 +29,9 @@ import Animated, {
 } from "react-native-reanimated";
 import axios, { AxiosError } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from 'expo-constants';
+
+
 
 export default function SigninScreen() {
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -123,7 +126,7 @@ export default function SigninScreen() {
   
 
   const handleLogin = async () => {
-    const localhost = process.env.LOCALHOST;
+    const localhost = Constants.expoConfig.extra.localhost;
     const isEmailValid = emailValidation(email);
     const isPasswordValid = passwordValidation(password);
     setLoadingBtn(true);
@@ -139,10 +142,8 @@ export default function SigninScreen() {
       password: password,
     };
   
-    console.log(user);
-  
     try {
-      const response = await axios.post("http://192.168.100.200:3002/api/auth/SignIn", user);
+      const response = await axios.post(`http://${localhost}:3002/api/auth/SignIn`, user);
   
       const token = response.data.token;
       const userObj = response.data.user;

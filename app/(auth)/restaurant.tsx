@@ -5,6 +5,7 @@ import InputField from '@/components/InputField'
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import Constants from 'expo-constants';
 
 interface UserProp {
   email: string;
@@ -23,10 +24,11 @@ export default function RestaurantScreen() {
   const userId = user.user;
 
   const HandleRestaurantName = async () => {
+    const localhost = Constants.expoConfig.extra.localhost;
     setLoading(true)
     const restaurantId = restaurantTxt;
     try {
-      const response = await axios.post(`http://192.168.100.201:3002/api/auth/${userId}/updateRestaurantDetails`,{restaurantId});
+      const response = await axios.post(`http://${localhost}:3002/api/auth/${userId}/updateRestaurantDetails`,{restaurantId});
 
       const { restaurantName } = response.data;
       await AsyncStorage.setItem("RestaurantName", JSON.stringify(restaurantName));
