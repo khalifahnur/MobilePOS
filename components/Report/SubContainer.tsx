@@ -125,30 +125,6 @@ const TrendingDishesCard = () => {
 
 export default function SubContainer({sales}) {
   const Sales = JSON.parse(sales);
-  const data = [
-    { value: 1050, label: "Mon" },
-    { value: 3000, label: "Tue" },
-    { value: 2300, label: "Wed" },
-    { value: 1140, label: "Thu" },
-    { value: 1060, label: "Fri" },
-    { value: 700, label: "Sat" },
-  ];
-  //const data2 = [{value: 10}, {value: 20}, {value: 46}, {value: 60},{value: 30}];
-  const Labels = [
-    "0",
-    "350",
-    "700",
-    "1050",
-    "1400",
-    "1750",
-    "2200",
-    "2550",
-    "2900",
-    "3250",
-    "3600",
-  ];
-
-
   const salesByDay: { [key: string]: number } = {
     Monday: 0,
     Tuesday: 0,
@@ -165,13 +141,33 @@ export default function SubContainer({sales}) {
     salesByDay[dayOfWeek] += sale.totalCost;
   });
   
-  console.log(salesByDay);
 
-  if (!Array.isArray(JSON.parse(sales))) {
-    console.error('Sales data is not an array or is undefined:', sales);
-    return;
-  }
+  const data = [
+    { day: 'Monday', totalSales: salesByDay['Monday'] },
+    { day: 'Tuesday', totalSales: salesByDay['Tuesday'] },
+    { day: 'Wednesday', totalSales: salesByDay['Wednesday'] },
+    { day: 'Thursday', totalSales: salesByDay['Thursday'] },
+    { day: 'Friday', totalSales: salesByDay['Friday'] },
+    { day: 'Saturday', totalSales: salesByDay['Saturday'] },
+    { day: 'Sunday', totalSales: salesByDay['Sunday'] },
+  ];
 
+  const dayMap = {
+    'Monday': 'Mon',
+    'Tuesday': 'Tue',
+    'Wednesday': 'Wed',
+    'Thursday': 'Thu',
+    'Friday': 'Fri',
+    'Saturday': 'Sat',
+    'Sunday': 'Sun'
+  };
+  
+  const transformedData = data.map(item => ({
+    value: item.totalSales, 
+    label: dayMap[item.day],
+  }));
+  
+  console.log(transformedData);
 
   return (
     <ScrollView >
@@ -186,20 +182,24 @@ export default function SubContainer({sales}) {
             <Text style={[styles.Reporttxt, { color: "navy" }]}>2.56</Text>
             <Text style={styles.Reporttxt3}>2.1% vs last week</Text>
           </View>
-          <View style={{ paddingVertical: 10 }}>
+          <View style={{ paddingVertical: 10, }}>
             <LineChart
-              data={data}
+              data={transformedData}
               yAxisExtraHeight={10}
+              isAnimated
+              animationDuration={1200}
               spacing={50}
-              initialSpacing={20}
+              initialSpacing={15}
               // yAxisLabelTexts={Labels}
-              yAxisOffset={350}
-              yAxisLabelWidth={80}
-              yAxisLabelPrefix="Ksh. "
+              yAxisOffset={0}
+              yAxisLabelWidth={40}
+              //yAxisLabelPrefix="Ksh. "
               // hideYAxisText
-              secondaryData={data}
+              //secondaryData={data}
               showVerticalLines
+              color="#1e1e1e"
             />
+            
           </View>
         </View>
 
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
   },
   ReportContainerStyles: {
     marginTop: 10,
-    backgroundColor: "#fff",
+    backgroundColor: "#f8f8f8",
     marginHorizontal: 10,
     shadowColor: "#000",
     shadowOffset: {
