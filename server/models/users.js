@@ -8,6 +8,8 @@ const userSchema = new Schema({
   phoneNumber:{type:String,required: true},
   createdAt: { type: Date, default: Date.now },
   restaurantId: { type: String, default: null },
+  verificationCode: { type: String },
+  verificationCodeExpiration: { type: Date },
 });
 
 const User = model("User", userSchema);
