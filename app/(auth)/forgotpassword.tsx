@@ -26,7 +26,7 @@ export default function ForgotScreen() {
           <InputField labelTxt="Email :" type="email" />
         </View>
 
-          <Pressable style={styles.resetbtn}>
+          <Pressable style={styles.resetbtn} onPress={()=>router.push("/(auth)/codeverify")}>
             <Text style={{color:'#fff'}}>Reset Password</Text>
           </Pressable>
 
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
       },
       resetbtn:{
         padding:20,
-        backgroundColor:"#4d81f1",
+        backgroundColor:"navy",
         borderRadius:8,
         alignItems:'center',
         alignSelf:'center'
