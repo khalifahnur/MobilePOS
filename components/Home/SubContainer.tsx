@@ -2,7 +2,6 @@ import {
   StyleSheet,
   Text,
   View,
-  FlatList,
   Image,
   Animated,
   LayoutChangeEvent,
@@ -15,7 +14,7 @@ import { useRouter } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import data from "../../components/Data";
+import LottieView from "lottie-react-native";
 
 type RootStackParamList = {
   "screens/product": {
@@ -39,17 +38,17 @@ export default function SubContainer({ extractedData }) {
 
   const HandleItem = (productData) => {
     //console.log(productData.image.uri)
-    router.push({pathname:"/screens/product",params: {
-      id:productData.id,
-      cost:productData.cost,
-      image:productData.image.uri,
-      name:productData.name,
-      quantity:productData.quantity,
-    },});
+    router.push({
+      pathname: "/screens/product",
+      params: {
+        id: productData.id,
+        cost: productData.cost,
+        image: productData.image.uri,
+        name: productData.name,
+        quantity: productData.quantity,
+      },
+    });
   };
-
-  
-  
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const listRef = useRef<Animated.FlatList | null>(null);
@@ -102,42 +101,39 @@ export default function SubContainer({ extractedData }) {
     }
   };
 
-  //console.log(extractedData)
   // Grouped data
   const groupedData = extractedData?.reduce((acc, item) => {
     const dataItems = item.data || [];
-    
-    dataItems.forEach(dataItem => {
+
+    dataItems.forEach((dataItem) => {
       //console.log('Processing data item:', dataItem); // Log each data item to understand its structure
-      
-      const title = dataItem?.title?.toUpperCase() || 'UNKNOWN';
-      const descriptionData = (dataItem?.description || []).map(desc => ({
-        id: dataItem._id || 'UNKNOWN_ID', 
-        name: desc.name || 'No Name',
-        quantity: desc.quantity || '0',
-        cost: (desc.cost /100).toFixed(2) || '0',
+
+      const title = dataItem?.title?.toUpperCase() || "UNKNOWN";
+      const descriptionData = (dataItem?.description || []).map((desc) => ({
+        id: dataItem._id || "UNKNOWN_ID",
+        name: desc.name || "No Name",
+        quantity: desc.quantity || "0",
+        cost: (desc.cost / 100).toFixed(2) || "0",
         image: { uri: desc.image },
       }));
-  
-      const existingCategory = acc?.find(cat => cat?.title === title);
-  
+
+      const existingCategory = acc?.find((cat) => cat?.title === title);
+
       if (existingCategory) {
         existingCategory.description.push(...descriptionData);
       } else {
         acc.push({
-          id: dataItem._id || 'UNKNOWN_ID',
+          id: dataItem._id || "UNKNOWN_ID",
           title,
-          description: descriptionData
+          description: descriptionData,
         });
       }
     });
-  
+
     return acc;
   }, []);
 
-  
-
-  return (
+  return extractedData.length !== 0 ? (
     <View style={styles.container}>
       <Animated.View
         style={[
@@ -209,10 +205,58 @@ export default function SubContainer({ extractedData }) {
         keyExtractor={(item, index) => index.toString()}
       />
     </View>
+  ) : (
+    <View
+      style={[
+        styles.Maincontainer,
+        { alignItems: "center", justifyContent: "center" },
+      ]}
+    >
+      <View
+        style={[
+          styles.container,
+          {
+            alignItems: "center",
+            justifyContent: "center",
+            alignContent: "center",
+          },
+        ]}
+      >
+        <Text style={{ fontSize: 24, fontWeight: "500", color: "#4d81f1" }}>
+          Welcome user!
+        </Text>
+        <Text
+          style={{
+            fontSize: 24,
+            fontWeight: "500",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+          }}
+        >
+          Tap on the plus button add your menu
+        </Text>
+        <View
+          style={{
+            marginTop: 40,
+          }}
+        >
+          <LottieView
+            source={require("../../assets/images/arrowDown.json")}
+            autoPlay
+            loop
+            style={{ width: 100, height: 100 }}
+          />
+        </View>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  Maincontainer: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     marginTop: 2,
