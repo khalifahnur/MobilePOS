@@ -19,6 +19,7 @@ import moment from "moment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { emptyCart } from "@/redux/CartSlice";
+import Constants from 'expo-constants';
 
 export default function CheckoutScreen() {
   const [visibleModal, setModalVisible] = useState(false);
@@ -44,11 +45,12 @@ export default function CheckoutScreen() {
   );
 
   const PaymentCost = subTotal;
+  const localhost = Constants.expoConfig?.extra?.localhost;
 
   const HandlePayment = async() => {
     setLoading(true);
     try{
-      const response = await axios.post("http://192.168.100.198:3002/api/sales/createSales",{
+      const response = await axios.post(`http://${localhost}:3002/api/sales/createSales`,{
         restaurantId,
         items:cart,
         totalCost:subTotal
@@ -134,7 +136,7 @@ export default function CheckoutScreen() {
               }}
             />
             {cart.map((item, index) => (
-              <View style={styles.cartTotal} key={index}>
+              <View style={styles.cartTotal} key={item.id}>
                 <View style={{ flex: 0.5 }}>
                   <Text style={styles.cartTotalTxt}>{item.name}</Text>
                 </View>
