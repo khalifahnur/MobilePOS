@@ -110,19 +110,19 @@ export default function SigninScreen() {
     }
   };
 
-  // useEffect(() => {
-  //   const checkLoginStatus = async () => {
-  //     try {
-  //       const token = await AsyncStorage.getItem("AuthToken");
-  //       if (token) {
-  //         router.replace("/(tabs)/");
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   checkLoginStatus();
-  // }, []);
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const token = await AsyncStorage.getItem("AuthToken");
+        if (token) {
+          router.replace("/(tabs)/");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    checkLoginStatus();
+  }, []);
 
   
 
