@@ -27,13 +27,7 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = await AsyncStorage.getItem("AuthToken"); 
-      setIsAuthenticated(!!token);
-    };
-
     if (loaded) {
-      checkAuth();
       setTimeout(async () => {
         await SplashScreen.hideAsync();
       }, 1000);
@@ -48,25 +42,22 @@ export default function RootLayout() {
     <Provider store={Store}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
-            {isAuthenticated ? (
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> 
-            ) : (
-              <Stack.Screen name="(auth)" options={{ headerShown: false, screenOptions: { headerShown: false } }} /> 
-            )}
-            <Stack.Screen name="screens/cart" />
-            <Stack.Screen name="screens/search" />
-            <Stack.Screen
-              name="screens/product"
-              options={{ presentation: "modal", headerShown: false }}
-            />
-            <Stack.Screen name="screens/checkout" />
-            <Stack.Screen
-              name="screens/filter"
-              options={{ presentation: "modal", headerShown: false }}
-            />
-            <Stack.Screen name="screens/details" />
-            <Stack.Screen name="screens/account" />
-            <Stack.Screen name="screens/addSection" />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="screens/cart" />
+          <Stack.Screen name="screens/search" />
+          <Stack.Screen
+            name="screens/product"
+            options={{ presentation: "modal", headerShown: false }}
+          />
+          <Stack.Screen name="screens/checkout" />
+          <Stack.Screen
+            name="screens/filter"
+            options={{ presentation: "modal", headerShown: false }}
+          />
+          <Stack.Screen name="screens/details" />
+          <Stack.Screen name="screens/account" />
+          <Stack.Screen name="screens/addSection" />
         </Stack>
         <ModalPortal />
       </ThemeProvider>
