@@ -1,6 +1,5 @@
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
-import data from '../Data';
 import SearchInp from './SearchInp';
 import { useRouter } from 'expo-router';
 
@@ -9,12 +8,26 @@ interface Item {
   description: { name: string }[];
 }
 
-interface StickyHeaderProps {
+type StickyHeaderProps = {
   onTabPress: (index: number) => void;
-}
+};
 
-export default function StickyHeader({ onTabPress }: StickyHeaderProps) {
-    const route = useRouter()
+// Define DataProps as a type
+type DataProps = {
+  description: {
+    name: string;
+    image: string;
+    cost: number;
+    quantity: string;
+  }[];
+  id: string;
+  title: string
+}[];
+
+type stickyHeaderProps = DataProps & StickyHeaderProps;
+
+export default function StickyHeader({ onTabPress, data }: stickyHeaderProps) {
+  const route = useRouter()
   const tabsScrollView = useRef<FlatList>(null);
   const [activeBtn, setActiveBtn] = useState<string>('PROMOTIONS');
   const [ind, setInd] = useState<number>(0);
