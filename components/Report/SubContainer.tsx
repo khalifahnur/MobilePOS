@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { LineChart } from "react-native-gifted-charts";
+import { BarChart, LineChart } from "react-native-gifted-charts";
 import PieChartComponent from "./PieChartComponent";
 import { FontAwesome6 } from "@expo/vector-icons";
 import moment from "moment";
@@ -74,28 +74,28 @@ const TrendingFood = [
     category: "Food",
     name: "cheese burger",
     orders: 590,
-    icon:'burger'
+    icon: "burger",
   },
   {
     id: 2,
     category: "Drinks",
     name: "Latte",
     orders: 400,
-    icon:'coffee'
+    icon: "coffee",
   },
   {
     id: 3,
     category: "Food",
     name: "Spicy Chicken",
     orders: 508,
-    icon:'burger'
+    icon: "burger",
   },
   {
     id: 4,
     category: "Food",
     name: "Shawarma",
     orders: 600,
-    icon:'burger'
+    icon: "burger",
   },
 ];
 
@@ -103,7 +103,13 @@ const TrendingDishesCard = () => {
   return (
     <View style={styles.card}>
       <Text style={styles.title}>Trending Dishes</Text>
-      <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <Text>Dishes</Text>
         <Text>Sales</Text>
       </View>
@@ -123,8 +129,9 @@ const TrendingDishesCard = () => {
   );
 };
 
-export default function SubContainer({sales}) {
+export default function SubContainer({ sales }) {
   const Sales = JSON.parse(sales);
+
   const salesByDay: { [key: string]: number } = {
     Monday: 0,
     Tuesday: 0,
@@ -134,43 +141,91 @@ export default function SubContainer({sales}) {
     Saturday: 0,
     Sunday: 0,
   };
-  
-  // Group sales by day of the week
-  Sales.forEach(sale => {
-    const dayOfWeek = moment(sale.createdAt).format('dddd');
+
+  // Get today’s day of the week (e.g., 'Thursday')
+  const today = moment().format("dddd");
+
+  // Get the date of the same day last week (7 days ago)
+  const lastWeekToday = moment().subtract(7, "days").format("YYYY-MM-DD");
+
+  const filteredSales = Sales.filter((sale) => {
+    const saleDate = moment(sale.createdAt).format("YYYY-MM-DD");
+    return moment(saleDate).isBetween(lastWeekToday, moment(), undefined, "[]");
+  });
+
+  filteredSales.forEach((sale) => {
+    const dayOfWeek = moment(sale.createdAt).format("dddd");
     salesByDay[dayOfWeek] += sale.totalCost;
   });
-  
 
   const data = [
-    { day: 'Monday', totalSales: salesByDay['Monday'] },
-    { day: 'Tuesday', totalSales: salesByDay['Tuesday'] },
-    { day: 'Wednesday', totalSales: salesByDay['Wednesday'] },
-    { day: 'Thursday', totalSales: salesByDay['Thursday'] },
-    { day: 'Friday', totalSales: salesByDay['Friday'] },
-    { day: 'Saturday', totalSales: salesByDay['Saturday'] },
-    { day: 'Sunday', totalSales: salesByDay['Sunday'] },
+    { day: "Monday", totalSales: salesByDay["Monday"] },
+    { day: "Tuesday", totalSales: salesByDay["Tuesday"] },
+    { day: "Wednesday", totalSales: salesByDay["Wednesday"] },
+    { day: "Thursday", totalSales: salesByDay["Thursday"] },
+    { day: "Friday", totalSales: salesByDay["Friday"] },
+    { day: "Saturday", totalSales: salesByDay["Saturday"] },
+    { day: "Sunday", totalSales: salesByDay["Sunday"] },
   ];
 
   const dayMap = {
-    'Monday': 'Mon',
-    'Tuesday': 'Tue',
-    'Wednesday': 'Wed',
-    'Thursday': 'Thu',
-    'Friday': 'Fri',
-    'Saturday': 'Sat',
-    'Sunday': 'Sun'
+    Monday: "Mon",
+    Tuesday: "Tue",
+    Wednesday: "Wed",
+    Thursday: "Thu",
+    Friday: "Fri",
+    Saturday: "Sat",
+    Sunday: "Sun",
   };
-  
-  const transformedData = data.map(item => ({
-    value: item.totalSales, 
-    label: dayMap[item.day],
-  }));
-  
-  console.log(transformedData);
 
-  return (
-    <ScrollView >
+  const daysOfWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
+  // Find today's index
+  const todayIndex = daysOfWeek.indexOf(today);
+
+  // Get the reordered days starting from last week's Friday to today
+  const reorderedDays = [
+    ...daysOfWeek.slice(todayIndex + 1),
+    ...daysOfWeek.slice(0, todayIndex + 1),
+  ];
+
+  // Transform data and reorder it
+  const transformedData = reorderedDays.map((day) => ({
+    value: salesByDay[day],
+    label: dayMap[day],
+  }));
+
+  const calculateTrendingDishes = () => {
+    const dishSales = {};
+
+    // Group sales by dishes
+    Sales?.forEach((sale) => {
+      const dishName = sale.name;
+      if (!dishSales[dishName]) {
+        dishSales[dishName] = 0;
+      }
+      dishSales[dishName] += sale.totalCost;
+    });
+
+    // Sort dishes by total sales (descending order)
+    return Object.entries(dishSales)
+      .map(([dishName, totalSales]) => ({ dishName, totalSales }))
+      .sort((a, b) => b.totalSales - a.totalSales);
+  };
+
+  const trendidished = calculateTrendingDishes();
+  console.log(trendidished);
+
+  return sales.length !== 0 ? (
+    <ScrollView>
       <View style={styles.Subcontainer}>
         <View style={styles.headerStyle}>
           <Text style={styles.HeaderTxt}>Overview</Text>
@@ -182,24 +237,18 @@ export default function SubContainer({sales}) {
             <Text style={[styles.Reporttxt, { color: "navy" }]}>2.56</Text>
             <Text style={styles.Reporttxt3}>2.1% vs last week</Text>
           </View>
-          <View style={{ paddingVertical: 10, }}>
-            <LineChart
+          <View style={{ paddingVertical: 10 }}>
+            <BarChart
+              barWidth={22}
+              barBorderRadius={4}
+              frontColor="lightgray"
               data={transformedData}
-              yAxisExtraHeight={10}
-              isAnimated
-              animationDuration={1200}
-              spacing={50}
-              initialSpacing={15}
-              // yAxisLabelTexts={Labels}
-              yAxisOffset={0}
-              yAxisLabelWidth={40}
-              //yAxisLabelPrefix="Ksh. "
-              // hideYAxisText
-              //secondaryData={data}
-              showVerticalLines
-              color="#1e1e1e"
+              yAxisThickness={0}
+              xAxisThickness={0}
+              isThreeD
+              height={200}
+              yAxisLabelWidth={50}
             />
-            
           </View>
         </View>
 
@@ -212,17 +261,53 @@ export default function SubContainer({sales}) {
         </View>
 
         {/* Trending Food */}
-        <View style={{marginTop:20}}>
-          <TrendingDishesCard  />
+        <View style={{ marginTop: 20 }}>
+          <TrendingDishesCard />
         </View>
       </View>
     </ScrollView>
+  ) : (
+    <View
+      style={[
+        styles.Maincontainer,
+        { alignItems: "center", justifyContent: "center" },
+      ]}
+    >
+      <View
+        style={[
+          styles.Subcontainer,
+          {
+            alignItems: "center",
+            justifyContent: "center",
+            alignContent: "center",
+          },
+        ]}
+      >
+        <Text style={{ fontSize: 24, fontWeight: "500", color: "#4d81f1" }}>
+          Overview Screen
+        </Text>
+        <Text
+          style={{
+            fontSize: 24,
+            fontWeight: "500",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+          }}
+        >
+          Add menu to show reports about your sales
+        </Text>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  Maincontainer: {
+    flex: 1,
+  },
   Subcontainer: {
-    marginBottom:20,
+    marginBottom: 20,
     paddingTop: 10,
   },
   headerStyle: {
@@ -260,13 +345,13 @@ const styles = StyleSheet.create({
   },
   trending: {
     flexDirection: "row",
-    justifyContent:'space-around',
-    alignItems:'center',
-    paddingHorizontal:20,
-    paddingVertical:5
+    justifyContent: "space-around",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 5,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 15,
     elevation: 3,
@@ -274,20 +359,20 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   iconContainer: {
     width: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   textContainer: {
     flex: 1,
@@ -295,15 +380,15 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   category: {
     fontSize: 12,
-    color: '#777',
+    color: "#777",
   },
   orders: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000',
+    fontWeight: "bold",
+    color: "#000",
   },
 });
