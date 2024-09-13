@@ -13,10 +13,9 @@ This is a full-stack mobile application project designed to handle the point of 
 6. [API Endpoints](#api-endpoints)
 7. [Project Structure](#project-structure)
 8. [Third-Party Services](#third-party-services)
-9. [Challenges](#challenges)
-10. [Schedule of Work](#schedule-of-work)
-11. [Contributing](#contributing)
-12. [License](#license)
+9. [Schedule of Work](#schedule-of-work)
+10. [Contributing](#contributing)
+11. [License](#license)
 
 ---
 
