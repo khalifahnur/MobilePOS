@@ -10,6 +10,7 @@ type PaymentModalProps = {
 };
 
 export default function PaymentModal({ visible, onClose, subTotal }: PaymentModalProps) {
+
   return (
     <Modal visible={visible} onBackdropPress={onClose} style={styles.modal}>
       <View style={styles.container}>
@@ -28,9 +29,7 @@ export default function PaymentModal({ visible, onClose, subTotal }: PaymentModa
           <Pressable style={styles.button} onPress={onClose}>
             <Text style={styles.buttonText}>New Order</Text>
           </Pressable>
-          <Pressable
-            style={styles.printButton}
-          >
+          <Pressable style={styles.printButton} onPress={handlePrint}>
             <AntDesign name="printer" size={15} color="#fff" />
             <Text style={styles.printText}>Print Receipt</Text>
           </Pressable>
