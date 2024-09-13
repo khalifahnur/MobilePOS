@@ -26,9 +26,9 @@ export default function ProductScreen() {
   const router = useRouter();
 
   const params = useLocalSearchParams();
-  console.log(params)
-const imageUrl = {uri:params.image}
-console.log(imageUrl)
+  const imageUri = Array.isArray(params.image) ? params.image[0] : params.image;
+
+  console.log(imageUri)
   const price = params?.cost;
 
   const HandleAdd = () => {
@@ -75,20 +75,22 @@ console.log(imageUrl)
         <StatusBar />
         <View style={styles.upperContainer}>
           <View style={styles.header}>
-            <Pressable
-              style={styles.iconButton}
-              onPress={() => router.back()}
-            >
+            <Pressable style={styles.iconButton} onPress={() => router.back()}>
               <Ionicons name="arrow-back-outline" size={20} color="black" />
             </Pressable>
             <Pressable style={styles.iconButton}>
               <Entypo name="dots-three-vertical" size={20} color="black" />
             </Pressable>
           </View>
-          <View style={styles.imageContainer}>
-            {/* {params?.image && ( */}
-              <Image source={{imageUrl}} style={styles.image}  />
-            {/* )} */}
+          <View>
+          {imageUri ? (
+        <Image
+          source={imageUri}
+          style={styles.image}
+        />
+      ) : (
+        <Text>No image available</Text>
+      )}
           </View>
         </View>
 
@@ -106,13 +108,12 @@ console.log(imageUrl)
             tabsName={["Reviews", "Ratings"]}
           >
             {selectedValue === "Reviews" ? (
-                <Text>
-                  A hamburger is a sandwich with a beef patty, served between
-                  two soft buns, and topped with various condiments such as
-                  cheese, lettuce, and ketchup. It's a popular...{" "}
-                  <Text style={styles.seeMore}>See more.</Text>
-                </Text>
-              
+              <Text>
+                A hamburger is a sandwich with a beef patty, served between two
+                soft buns, and topped with various condiments such as cheese,
+                lettuce, and ketchup. It's a popular...{" "}
+                <Text style={styles.seeMore}>See more.</Text>
+              </Text>
             ) : (
               <Text>5 star ratings</Text>
             )}
@@ -177,9 +178,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: 200,
-    height: 200,
-    backgroundColor: "transparent",
+    width: 80,
+    height: 80,
     borderRadius: 20,
   },
   bottomContainer: {

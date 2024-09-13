@@ -11,10 +11,10 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import data from "@/components/Data";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
+import LottieView from "lottie-react-native";
 
 type RootStackParamList = {
   "screens/product": {
@@ -33,28 +33,37 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function SearchScreen() {
   const router = useRouter();
   const navigation = useNavigation<NavigationProp>();
+  const params = useLocalSearchParams();
+  let parsedData;
+
+  try {
+    parsedData = JSON.parse(params.data);
+  } catch (error) {
+    console.log("Error parsing params", error);
+    parsedData = [];
+  }
 
   const [value, setValue] = useState<string>("");
   const [filteredData, setFilteredData] = useState<any[]>([]);
 
   useEffect(() => {
-    const filteredText = data.flatMap((item) =>
+    const filteredText = parsedData?.flatMap((item) =>
       item.description.filter((desc) =>
         desc?.name?.toLowerCase().includes(value?.toLowerCase())
       )
     );
     setFilteredData(filteredText);
   }, [value]);
-  console.log(filteredData);
 
-  const HandleItem = (productData:{cost: string;
-    id: number;
-    name: string;
-    quantity: string;
-    image: string;
-  }) => {
-    //console.log(productData)
-    navigation.navigate("screens/product", { productData: JSON.stringify(productData) });
+  const HandleItem = (productData) => {
+    console.log(productData)
+    router.navigate({pathname:"screens/product",params: {
+      id: productData.id,
+        cost: productData.cost,
+        image: JSON.stringify(productData.image),
+        name: productData.name,
+        quantity: productData.quantity,
+    }});
   };
 
   useLayoutEffect(() => {
@@ -119,6 +128,12 @@ export default function SearchScreen() {
             />
           ) : (
             <View style={{ alignItems: "center", marginTop: 20 }}>
+              <LottieView
+                source={require("../../assets/images/notfound.json")}
+                autoPlay
+                loop
+                style={{ width: 100, height: 100 }}
+              />
               <Text>No matches found</Text>
             </View>
           )
