@@ -12,19 +12,20 @@ type StickyHeaderProps = {
   onTabPress: (index: number) => void;
 };
 
-// Define DataProps as a type
-type DataProps = {
-  description: {
-    name: string;
-    image: string;
-    cost: number;
-    quantity: string;
-  }[];
-  id: string;
-  title: string
-}[];
+type DescriptionItem = {
+  name: string;
+  image: string;
+  cost: number;
+  quantity: string;
+};
 
-type stickyHeaderProps = DataProps & StickyHeaderProps;
+type DataItem = {
+  description: DescriptionItem[];
+  id: string;
+  title: string;
+};
+
+type stickyHeaderProps = DataItem & StickyHeaderProps;
 
 export default function StickyHeader({ onTabPress, data }: stickyHeaderProps) {
   const route = useRouter()
@@ -47,9 +48,11 @@ export default function StickyHeader({ onTabPress, data }: stickyHeaderProps) {
     onTabPress(index);
   };
 
-  const HandleSearchNavigation=():void =>{
-    route.navigate("/screens/search")
-  }
+  const HandleSearchNavigation = (): void => {
+    // Stringify the data
+    const stringifiedData = JSON.stringify(data);
+    route.navigate({ pathname: "/screens/search", params: { data: stringifiedData } });
+}
 
   return (
     <View>

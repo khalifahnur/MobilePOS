@@ -155,7 +155,7 @@ export default function SubContainer({ extractedData }) {
         ]}
         onLayout={onLayoutStickyHeader}
       >
-        <StickyHeader onTabPress={handleTabPress} />
+        <StickyHeader onTabPress={handleTabPress} data={groupedData}  />
       </Animated.View>
       <Animated.FlatList
         ref={listRef}
@@ -166,7 +166,9 @@ export default function SubContainer({ extractedData }) {
               <Text style={styles.Title}>{item.title}</Text>
             </View>
             <View style={{ flex: 1 }}>
-              {item.description?.map((descItem, descIndex: number) => (
+              {item.description?.map((descItem, descIndex: number) =>{ 
+                // console.log(descItem)
+                return(
                 <Pressable onPress={() => HandleItem(descItem)} key={descIndex}>
                   <View style={styles.Description}>
                     <View style={{ flex: 0.7 }}>
@@ -191,7 +193,7 @@ export default function SubContainer({ extractedData }) {
                     <View style={styles.Divider} />
                   )}
                 </Pressable>
-              ))}
+              )})}
             </View>
           </View>
         )}
