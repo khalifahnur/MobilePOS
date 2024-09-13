@@ -1,17 +1,120 @@
-# Welcome to your Expo app 👋
+# **Mobile POS for Restaurants** 🍽
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is a full-stack mobile application project designed to handle the point of sale (POS) system for restaurants. The project consists of two main parts: a **frontend** mobile application built with React Native and TypeScript, and a **backend** built with Node.js, Express and MongoDB atlas. The backend handles API requests, authentication, and data management.
 
-## Get started
+---
 
-1. Install dependencies
+## **Table of Contents**
+1. [Project Description](#project-description)
+2. [Tech Stack](#tech-stack)
+3. [Features](#features)
+4. [Installation and Setup](#installation-and-setup)
+5. [Usage](#usage)
+6. [API Endpoints](#api-endpoints)
+7. [Project Structure](#project-structure)
+8. [Third-Party Services](#third-party-services)
+9. [Challenges](#challenges)
+10. [Schedule of Work](#schedule-of-work)
+11. [Contributing](#contributing)
+12. [License](#license)
 
+---
+
+## **Project Description**
+
+This project is a mobile restaurant POS system that helps streamline order processing, manage inventory and generate real-time reports. The mobile app (built in React Native) allows restaurant staff to manage orders, while the backend API (Node.js + MongoDB) manages data storage and business logic.
+
+---
+
+## **Tech Stack**
+
+### **Frontend (Mobile App)**:
+- React Native
+- TypeScript
+- Expo
+- Expo router (For routing/navigation)
+
+### **Backend (Server)**:
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose (ODM for MongoDB)
+- TypeScript
+
+### **Development Tools**:
+- Nodemon and Postman
+- Axios for HTTP requests
+- Moment.js for handling dates
+
+---
+
+## **Features**
+
+- **Order Management**: Add, update, and remove items from orders.
+- **Menu Management**: Create,edit and delete menu item with ease.
+- **User Authentication**: Employee signup/signin.
+- **Reporting**: Generate real-time sales and also transcations history.
+- **Receipt Generation**: Print and share receipts.
+- **Mobile-first**: Optimized for mobile devices used by restaurant staff.
+
+---
+
+## **Installation and Setup**
+
+### **Prerequisites**
+- Node.js (>=14.x)
+- MongoDB
+- Expo CLI
+
+### **1. Clone the Repository**
+
+```bash
+git clone https://github.com/khalifahnur/MobilePOS.git
+cd MobilePOS
+```
+
+### **2. Backend Setup**
+
+1. Navigate to the backend directory:
+   ```bash
+   cd server
+   ```
+
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start the app
+3. Set up environment variables by creating a `.env` file:
+   ```bash
+   touch .env
+   ```
 
+4. Add the following environment variables:
+   ```
+   MONGO_URI=<your-mongodb-uri>
+   JWT_SECRET=<your-jwt-secret>
+   PORT=3002
+   ```
+
+5. Start the backend server:
+   ```bash
+   npm run devStart
+   ```
+
+### **3. Frontend Setup (React Native)**
+
+1. Navigate to the main directory:
+   ```bash
+   cd .
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. . Start the app
    ```bash
     npx expo start
    ```
@@ -23,28 +126,102 @@ In the output, you'll find options to open the app in a
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## **Usage**
 
-When you're ready, run:
+1. **Start the backend server**:
+   ```bash
+   npm run devStart
+   ```
 
-```bash
-npm run reset-project
+2. **Run the frontend mobile app**:
+   ```bash
+   npx expo start
+   ```
+
+3. Use an Android emulator or a physical device to interact with the POS system.
+
+---
+
+## **API Endpoints**
+
+### **Authentication**
+- **POST** `/api/auth/signup`: Register a new employee.
+- **POST** `/api/auth/sign`: Login for employees and admins.
+- **POST** `/api/auth/:userId/updateRestaurantDetails`: For updating restaurant name.
+- **POST** `/api/auth/forgot-password`: forgot password.
+- **POST** `/api/auth/verify-code`: Verify the new code.
+- **POST** `/api/auth/reset-password`: Reset new password.
+
+### **Inventory**
+- **GET** `/api/menu/createMenu/:restaurantId`: Get all orders for a restaurant.
+- **POST** `/api/data/fetchMenu`: fetch all inventory items.
+- **DELETE** `/api/menu/remove`: Delete an item.
+- **PUT** `/api/menu/update`: edit and item.
+
+### **Orders**
+- **POST** `/api/sales/createSales`: Add new new order.
+- **GET** `/api/fetchSales`: Get all order.
+- **GET** `/api/filteredSales`: fetch filtered order.
+
+---
+
+## **Project Structure**
+
+### **Backend (Node.js + Express + MongoDB)**
+
 ```
+backend/
+│
+├── controllers/       # Business logic
+│   └── authController.js
+│   └── orderController.js
+│   └── inventoryController.js
+│
+├── models/            # Mongoose models
+│   └── User.js
+│   └── Order.js
+│   └── Inventory.js
+│
+├── routes/            # API routes
+│   └── authRoutes.js
+│   └── orderRoutes.js
+│   └── inventoryRoutes.js
+│
+│
+├── utils/             # Utility functions
+├── app.json          # Express app setup
+├── server.js         # Server entry point
+└── .env               # Environment variables
+```
+---
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## **Third-Party Services**
 
-## Learn more
+- **MongoDB Atlas**: Cloud database service for storing restaurant data.
+- **Expo Application Services (EAS)**: Used for building and deploying the mobile app.
+- **JWT (JSON Web Tokens)**: For secure user authentication.
 
-To learn more about developing your project with Expo, look at the following resources:
+---
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## **Challenges**
 
-## Join the community
+- Implementing real-time reporting.
+- Synchronizing communication between the mobile app and the backend.
+- Ensuring cross-platform compatibility (Android/iOS).
+- Efficient state management for complex user interactions.
 
-Join our community of developers creating universal apps.
+---
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## **Contributing**
+
+Contributions are welcome! Please open an issue or submit a pull request if you'd like to contribute to the project.
+
+---
+
+## **License**
+
+This project is licensed under the MIT License.
+
+--- 
