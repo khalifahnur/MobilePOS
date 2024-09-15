@@ -111,8 +111,8 @@ export default function SubContainer({ extractedData }) {
       const title = dataItem?.title?.toUpperCase() || "UNKNOWN";
       const descriptionData = (dataItem?.description || []).map((desc) => ({
         id: dataItem._id || "UNKNOWN_ID",
-        name: desc.name || "No Name",
-        quantity: desc.quantity || "0",
+        name: desc.name || "",
+        quantity: desc.quantity || "",
         cost: (desc.cost / 100).toFixed(2) || "0",
         image: { uri: desc.image },
       }));
@@ -155,7 +155,7 @@ export default function SubContainer({ extractedData }) {
         ]}
         onLayout={onLayoutStickyHeader}
       >
-        <StickyHeader onTabPress={handleTabPress} data={groupedData}  />
+        <StickyHeader onTabPress={handleTabPress} data={groupedData} />
       </Animated.View>
       <Animated.FlatList
         ref={listRef}
@@ -166,9 +166,9 @@ export default function SubContainer({ extractedData }) {
               <Text style={styles.Title}>{item.title}</Text>
             </View>
             <View style={{ flex: 1 }}>
-              {item.description?.map((descItem, descIndex: number) =>{ 
-                // console.log(descItem)
-                return(
+              {item.description?.map((descItem, descIndex: number) => {
+                
+              return(
                 <Pressable onPress={() => HandleItem(descItem)} key={descIndex}>
                   <View style={styles.Description}>
                     <View style={{ flex: 0.7 }}>
@@ -183,10 +183,17 @@ export default function SubContainer({ extractedData }) {
                       <Text style={styles.TextCost}>Ksh.{descItem.cost}</Text>
                     </View>
                     <View style={{ flex: 0.3, alignItems: "flex-end" }}>
-                      <Image
-                        source={descItem.image}
-                        style={styles.ImageStyle}
-                      />
+                      {descItem.image !== "" ? (
+                        <Image
+                          source={descItem.image}
+                          style={styles.ImageStyle}
+                        />
+                      ) : (
+                        <Image
+                          source={require("../../assets/images/imagebg.jpeg")}
+                          style={styles.ImageStyle}
+                        />
+                      )}
                     </View>
                   </View>
                   {descIndex < item.description.length - 1 && (
