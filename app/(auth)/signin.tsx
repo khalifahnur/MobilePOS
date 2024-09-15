@@ -42,6 +42,7 @@ export default function SigninScreen() {
   const [emailErr, setEmailErr] = useState<string>("");
   const [passwordErr, setPasswordErr] = useState<string>("");
   const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
+  const [restaurantId, setrestaurantId] = useState();
 
   const router = useRouter();
 
@@ -111,17 +112,29 @@ export default function SigninScreen() {
   };
 
   useEffect(() => {
-    const checkLoginStatus = async () => {
+    const FetchData = async () => {
       try {
+        const userRawObj = await AsyncStorage.getItem("User");
+        if (userRawObj) {
+          const userObj = JSON.parse(userRawObj);
+          setrestaurantId(userObj.restaurantId);
+        }
+  
         const token = await AsyncStorage.getItem("AuthToken");
-        if (token) {
+        if (token && restaurantId) {
           router.replace("/(tabs)/");
         }
       } catch (error) {
         console.log(error);
       }
     };
-    checkLoginStatus();
+  
+    FetchData();
+  }, []);
+  
+
+  useEffect(() => {
+    
   }, []);
 
   
