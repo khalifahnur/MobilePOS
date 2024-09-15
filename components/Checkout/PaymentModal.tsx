@@ -29,7 +29,7 @@ export default function PaymentModal({ visible, onClose, subTotal }: PaymentModa
           <Pressable style={styles.button} onPress={onClose}>
             <Text style={styles.buttonText}>New Order</Text>
           </Pressable>
-          <Pressable style={styles.printButton} onPress={handlePrint}>
+          <Pressable style={styles.printButton}>
             <AntDesign name="printer" size={15} color="#fff" />
             <Text style={styles.printText}>Print Receipt</Text>
           </Pressable>
