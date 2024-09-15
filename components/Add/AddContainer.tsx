@@ -18,6 +18,7 @@ import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from 'expo-constants';
 
 export default function AddContainer() {
   const [category, setCategory] = useState<string>("");
@@ -31,6 +32,7 @@ export default function AddContainer() {
   const [loading,setLoading] = useState(false);
 
   const router = useRouter();
+  const localhost = Constants.expoConfig?.extra?.localhost;
 
   const window = useWindowDimensions();
   const height= window.height;
@@ -110,7 +112,7 @@ export default function AddContainer() {
   const HandleSaveMenu = async () => {
     setLoading(true)
     try {
-      const response = await axios.post("http://192.168.100.200:3002/api/menu/createMenu", {
+      const response = await axios.post(`http://${localhost}:3002/api/menu/createMenu`, {
         restaurantId,
         title: category,
         name: title,

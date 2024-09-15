@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import InputField from "../InputField";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from 'expo-constants';
 
 type editModalProps = {
   data: {
@@ -17,6 +18,8 @@ export default function EditModal({ data, onClose }: editModalProps) {
   const [newPrce, setNewPrce] = useState<number | string>("");
   const [restaurantId, setrestaurantId] = useState();
 
+  const localhost = Constants.expoConfig?.extra?.localhost;
+
   //console.log(data);
 
   const HandleUpdateItem = async () => {
@@ -30,7 +33,7 @@ export default function EditModal({ data, onClose }: editModalProps) {
     if (restaurantId && title && oldName && oldCost && newName && newCost) {
       try {
         const response = await axios.put(
-          "http://192.168.100.200:3002/api/menu/update",
+          `http://${localhost}:3002/api/menu/update`,
           {
             restaurantId,
             title,

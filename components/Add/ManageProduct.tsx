@@ -14,6 +14,7 @@ import { AntDesign, Feather } from "@expo/vector-icons";
 import axios from "axios";
 import EditModal from "./EditModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from 'expo-constants';
 
 type modalProps = {
   name: string;
@@ -28,6 +29,8 @@ export default function ManageProduct({ fetchedData }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [restaurantId, setrestaurantId] = useState();
   const [reload, setReload] = useState(false);
+
+  const localhost = Constants.expoConfig?.extra?.localhost;
 
   const groupedData = fetchedData?.reduce((acc, item) => {
     const dataItems = item.data || [];
@@ -68,7 +71,7 @@ export default function ManageProduct({ fetchedData }) {
   const HandleRemoveItem = async ({ title, id }) => {
     try {
       const response = await axios.delete(
-        "http://192.168.100.200:3002/api/menu/remove",
+        `http://${localhost}:3002/api/menu/remove`,
         {
           data: {
             restaurantId,
