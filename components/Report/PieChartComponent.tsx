@@ -1,7 +1,78 @@
 import { Text, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
 
-export default function PieChartComponent() {
+export default function PieChartComponent({Sales}) {
+
+
+  const calculatePerformance = (sales) => {
+    const totalRevenue = sales.reduce((sum, sale) => sum + sale.totalCost, 0);
+    const totalSales = sales.length;
+  
+    const totalItemsSold = sales.reduce((total, sale) => {
+      return total + sale.items.reduce((sum, item) => sum + item.quantity, 0);
+    }, 0);
+  
+    const averageOrderValue = totalSales ? totalRevenue / totalSales : 0;
+    const revenuePerItem = totalItemsSold ? totalRevenue / totalItemsSold : 0;
+  
+    return {
+      totalRevenue,
+      totalSales,
+      totalItemsSold,
+      averageOrderValue,
+      revenuePerItem
+    };
+  };
+  
+  const performanceMetrics = calculatePerformance(Sales);
+  console.log(performanceMetrics);
+  
+  const evaluateSalesPerformanceWithPercentage = (metrics, targets) => {
+    const { totalRevenue, totalSales, averageOrderValue } = metrics;
+    const { targetRevenue, targetSales, targetAOV } = targets;
+  
+    const ratePerformance = (value, target) => {
+      const percentage = (value / target) * 100;
+      let rating;
+      if (percentage >= 90) {
+        rating = 'Excellent';
+      } else if (percentage >= 70) {
+        rating = 'Good';
+      } else if (percentage >= 50) {
+        rating = 'Okay';
+      } else {
+        rating = 'Poor';
+      }
+      return { rating, percentage: percentage.toFixed(2) + '%' };
+    };
+  
+    return {
+      revenue: ratePerformance(totalRevenue, targetRevenue),
+      sales: ratePerformance(totalSales, targetSales),
+      aov: ratePerformance(averageOrderValue, targetAOV),
+    };
+  };
+  
+  // Example metrics and targets
+  const metrics = {
+    totalRevenue: 12000,
+    totalSales: 100,
+    averageOrderValue: 120,
+  };
+  
+  const targets = {
+    targetRevenue: 15000,
+    targetSales: 120,
+    targetAOV: 150,
+  };
+  
+  // Calculate performance ratings and percentages
+  const performanceRatings = evaluateSalesPerformanceWithPercentage(metrics, targets);
+  console.log(performanceRatings);
+  
+
+
+
   const pieData = [
     {
       value: 47,
@@ -46,11 +117,11 @@ export default function PieChartComponent() {
             }}
           >
             {renderDot("#006DFF")}
-            <Text style={{ color: "#fff", fontSize: 9 }}>Excellent: 47%</Text>
+            <Text style={{ color: "#fff", fontSize: 9 }}>Excellent: 90%</Text>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             {renderDot("#8F80F3")}
-            <Text style={{ color: "#fff", fontSize: 9 }}>Okay: 16%</Text>
+            <Text style={{ color: "#fff", fontSize: 9 }}>Okay: 50%</Text>
           </View>
         </View>
         <View
@@ -68,11 +139,11 @@ export default function PieChartComponent() {
             }}
           >
             {renderDot("#3BE9DE")}
-            <Text style={{ color: "#fff", fontSize: 9 }}>Good: 40%</Text>
+            <Text style={{ color: "#fff", fontSize: 9 }}>Good: 70%</Text>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             {renderDot("#FF7F97")}
-            <Text style={{ color: "#fff", fontSize: 9 }}>Poor: 3%</Text>
+            <Text style={{ color: "#fff", fontSize: 9 }}>Poor: below 50%</Text>
           </View>
         </View>
       </>
@@ -97,7 +168,7 @@ export default function PieChartComponent() {
         }}
       >
         <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
-          Total Income
+          Perfomance
         </Text>
         <View style={{ padding: 20, alignItems: "center" }}>
           <PieChart
@@ -116,10 +187,10 @@ export default function PieChartComponent() {
                   <Text
                     style={{ fontSize: 14, color: "white", fontWeight: "bold" }}
                   >
-                    47%
+                    %
                   </Text>
                   <Text style={{ fontSize: 10, color: "white" }}>
-                    Excellent
+                    Good
                   </Text>
                 </View>
               );
@@ -145,9 +216,8 @@ export default function PieChartComponent() {
         }}
       >
         <View style={{ padding: 20 }}>
-          <Text>Total Orders</Text>
-          <Text>-2.23%</Text>
-          <Text>23,456</Text>
+          <Text>Total Orders:</Text>
+          <Text>{performanceMetrics.totalSales}</Text>
         </View>
       </View>
     </View>

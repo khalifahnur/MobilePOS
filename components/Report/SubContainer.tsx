@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { BarChart, LineChart } from "react-native-gifted-charts";
+import { BarChart } from "react-native-gifted-charts";
 import PieChartComponent from "./PieChartComponent";
 import { FontAwesome6 } from "@expo/vector-icons";
 import moment from "moment";
@@ -145,28 +145,20 @@ export default function SubContainer({ sales }) {
   // Get today’s day of the week (e.g., 'Thursday')
   const today = moment().format("dddd");
 
-  // Get the date of the same day last week (7 days ago)
-  const lastWeekToday = moment().subtract(7, "days").format("YYYY-MM-DD");
+  // Get the date of the same day last week (6 days ago)
+  const lastWeekToday = moment().subtract(6, "days").format("YYYY-MM-DD");
 
   const filteredSales = Sales.filter((sale) => {
     const saleDate = moment(sale.createdAt).format("YYYY-MM-DD");
     return moment(saleDate).isBetween(lastWeekToday, moment(), undefined, "[]");
   });
 
+
   filteredSales.forEach((sale) => {
     const dayOfWeek = moment(sale.createdAt).format("dddd");
+    console.log(dayOfWeek)
     salesByDay[dayOfWeek] += sale.totalCost;
   });
-
-  const data = [
-    { day: "Monday", totalSales: salesByDay["Monday"] },
-    { day: "Tuesday", totalSales: salesByDay["Tuesday"] },
-    { day: "Wednesday", totalSales: salesByDay["Wednesday"] },
-    { day: "Thursday", totalSales: salesByDay["Thursday"] },
-    { day: "Friday", totalSales: salesByDay["Friday"] },
-    { day: "Saturday", totalSales: salesByDay["Saturday"] },
-    { day: "Sunday", totalSales: salesByDay["Sunday"] },
-  ];
 
   const dayMap = {
     Monday: "Mon",
@@ -197,32 +189,10 @@ export default function SubContainer({ sales }) {
     ...daysOfWeek.slice(0, todayIndex + 1),
   ];
 
-  // Transform data and reorder it
   const transformedData = reorderedDays.map((day) => ({
     value: salesByDay[day],
     label: dayMap[day],
   }));
-
-  const calculateTrendingDishes = () => {
-    const dishSales = {};
-
-    // Group sales by dishes
-    Sales?.forEach((sale) => {
-      const dishName = sale.name;
-      if (!dishSales[dishName]) {
-        dishSales[dishName] = 0;
-      }
-      dishSales[dishName] += sale.totalCost;
-    });
-
-    // Sort dishes by total sales (descending order)
-    return Object.entries(dishSales)
-      .map(([dishName, totalSales]) => ({ dishName, totalSales }))
-      .sort((a, b) => b.totalSales - a.totalSales);
-  };
-
-  const trendidished = calculateTrendingDishes();
-  console.log(trendidished);
 
   return sales.length !== 0 ? (
     <ScrollView>
@@ -255,9 +225,9 @@ export default function SubContainer({ sales }) {
         {/* Daily sales */}
         <View style={styles.DailySales}>
           <View style={{ alignItems: "center" }}>
-            <ScrollTabs />
+            {/* <ScrollTabs /> */}
           </View>
-          <PieChartComponent />
+          <PieChartComponent Sales={Sales} />
         </View>
 
         {/* Trending Food */}
@@ -330,6 +300,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 10,
     borderRadius: 15,
+    marginBottom:20,
   },
   Reporttxt: {
     fontSize: 14,
